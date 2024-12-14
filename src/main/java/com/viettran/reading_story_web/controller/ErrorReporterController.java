@@ -1,0 +1,43 @@
+package com.viettran.reading_story_web.controller;
+
+import com.viettran.reading_story_web.dto.request.ErrorReporterRequest;
+import com.viettran.reading_story_web.dto.response.ApiResponse;
+import com.viettran.reading_story_web.dto.response.ErrorReporterResponse;
+import com.viettran.reading_story_web.service.ErrorReporterService;
+import jakarta.validation.Valid;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/error-reporter")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class ErrorReporterController {
+    ErrorReporterService errorReporterService;
+
+    @PostMapping
+    ApiResponse<ErrorReporterResponse> createErrorReporter(@Valid @RequestBody ErrorReporterRequest request){
+        return ApiResponse.<ErrorReporterResponse>builder()
+                .result(errorReporterService.createErrorReporter(request))
+                .build();
+    }
+
+    @GetMapping
+    ApiResponse<List<ErrorReporterResponse>> getAllReporter(){
+        return ApiResponse.<List<ErrorReporterResponse>>builder()
+                .result(errorReporterService.getAllReporter())
+                .build();
+    }
+
+    @DeleteMapping("/{reporterId}")
+    ApiResponse<String> deleteErrorReporter(@PathVariable Integer reporterId){
+        errorReporterService.deleteErrorReporter(reporterId);
+        return ApiResponse.<String>builder()
+                .result("This filter has been deleted")
+                .build();
+    }
+}
