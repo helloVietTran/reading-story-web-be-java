@@ -31,6 +31,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -56,13 +58,13 @@ public class StoryService {
 
     FileService fileService;
     GenreService genreService;
+    AuthenticationService authenticationService;
 
     DateTimeFormatUtil dateTimeFormatUtil;
 
     StoryCacheRepository storyCacheRepository;
 
     StoryJobScheduler storyJobScheduler;
-    AuthenticationService authenticationService;
 
     @NonFinal
     @Value("${app.folder.story}")
@@ -85,29 +87,15 @@ public class StoryService {
         return response;
     }
 
+    public PageResponse<StoryResponse> getStories(int page, int size) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "updatedAt");
+        Pageable pageable = PageRequest.of(page - 1, size, sorting);
 
-    public PageResponse<StoryResponse> getStories(int page, int size){
-        Sort sort = Sort.by("updatedAt").descending();
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Page<Story> pageData = storyRepository.findAll(pageable);
+        List<Story> shuffledContent = pageData.getContent();
+        Collections.shuffle(shuffledContent);
 
-        var pageData = storyRepository.findAll(pageable);
-        Collections.shuffle(pageData.getContent());// xáo trộn list trả về
-
-        List<StoryResponse> storyResponseList = pageData.getContent().stream().map(result -> {
-            List<Chapter > chapters = chapterRepository.findTop3ChaptersByStoryId(result.getId());
-
-            StoryResponse storyResponse = storyMapper.toStoryResponse(result);
-            storyResponse.setChapters(chapters.stream().map(chapter-> {
-
-                ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
-                chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
-                chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
-
-                return  chapterResponse;
-            }).toList());
-
-            return storyResponse;
-        }).toList();
+        List<StoryResponse> storyResponseList = mapToStoryResponseList(shuffledContent);
 
         return PageResponse.<StoryResponse>builder()
                 .currentPage(page)
@@ -118,7 +106,6 @@ public class StoryService {
                 .build();
     }
 
-
     public StoryResponse getStoryById(Integer storyId){
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
@@ -127,6 +114,10 @@ public class StoryService {
         response.setUpdatedAt(dateTimeFormatUtil.format(story.getUpdatedAt()));
         response.setCreatedAt(dateTimeFormatUtil.format(story.getCreatedAt()));
         response.setStatus(StoryStatus.getFullNameFromStatus(story.getStatus()));
+        response.setGenres(story.getGenres()
+                .stream()
+                .map(Genre::getName)
+                .collect(Collectors.toSet()));
 
         return  response;
     }
@@ -145,7 +136,6 @@ public class StoryService {
 
         return storyMapper.toStoryResponse(storyRepository.save(story));
     }
-
 
     public PageResponse<StoryResponse> searchStories(String keyword, int page, int size){
         Sort sort = Sort.by("updatedAt").descending();
@@ -179,7 +169,6 @@ public class StoryService {
         return storyMapper.toStoryResponse(story);
     }
 
-
     public PageResponse<StoryResponse> getStoriesByGenreQueryCode(
             Integer queryCode,
             StoryStatus status,
@@ -188,7 +177,6 @@ public class StoryService {
             int size
     ) {
         Sort sorting = Sort.by(Sort.Direction.DESC, sort == 2 ? "createdAt" : "updatedAt");
-
         Pageable pageable = PageRequest.of(page, size, sorting);
 
         // Gọi repository
@@ -205,31 +193,15 @@ public class StoryService {
                 .build();
     }
 
-
-    public PageResponse<StoryResponse> getStoriesByGender(int page, int size,Gender gender){
+    public PageResponse<StoryResponse> getStoriesByGender(int page, int size, Gender gender) {
         Sort sorting = Sort.by(Sort.Direction.DESC, "updatedAt");
-
         Pageable pageable = PageRequest.of(page - 1, size, sorting);
-        // theo giới tính: name, nữ, cả hai
-        // => tìm truyện dành cho nam => không tìm dành cho nữ
-        var pageData =  storyRepository.findByGenderNot(gender, pageable);
-        Collections.shuffle(pageData.getContent());
 
-        List<StoryResponse> storyResponseList = pageData.getContent().stream().map(result -> {
-            List<Chapter > chapters = chapterRepository.findTop3ChaptersByStoryId(result.getId());
+        Page<Story> pageData = storyRepository.findByGenderNot(gender, pageable);
+        List<Story> shuffledContent = pageData.getContent();
+        Collections.shuffle(shuffledContent);
 
-            StoryResponse storyResponse = storyMapper.toStoryResponse(result);
-            storyResponse.setChapters(chapters.stream().map(chapter-> {
-
-                ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
-                chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
-                chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
-
-                return  chapterResponse;
-            }).toList());
-
-            return storyResponse;
-        }).toList();
+        List<StoryResponse> storyResponseList = mapToStoryResponseList(shuffledContent);
 
         return PageResponse.<StoryResponse>builder()
                 .currentPage(page)
@@ -240,29 +212,15 @@ public class StoryService {
                 .build();
     }
 
-    public PageResponse<StoryResponse> getHotStories(int page, int size){
+    public PageResponse<StoryResponse> getHotStories(int page, int size) {
         Sort sorting = Sort.by(Sort.Direction.DESC, "updatedAt");
-
         Pageable pageable = PageRequest.of(page, size, sorting);
 
-        var pageData =  storyRepository.findByHotTrue(pageable);
-        Collections.shuffle(pageData.getContent());
+        Page<Story> pageData = storyRepository.findByHotTrue(pageable);
+        List<Story> shuffledContent = pageData.getContent();
+        Collections.shuffle(shuffledContent);
 
-        List<StoryResponse> storyResponseList = pageData.getContent().stream().map(result -> {
-            List<Chapter > chapters = chapterRepository.findTop3ChaptersByStoryId(result.getId());
-
-            StoryResponse storyResponse = storyMapper.toStoryResponse(result);
-            storyResponse.setChapters(chapters.stream().map(chapter-> {
-
-                ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
-                chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
-                chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
-
-                return  chapterResponse;
-            }).toList());
-
-            return storyResponse;
-        }).toList();
+        List<StoryResponse> storyResponseList = mapToStoryResponseList(shuffledContent);
 
         return PageResponse.<StoryResponse>builder()
                 .currentPage(page)
@@ -297,7 +255,6 @@ public class StoryService {
         }*/
     }
 
-
     public List<FollowResponse> getFollowedStories(){
         String userId = authenticationService.getCurrentUserId();
         List<Follow> followedStories= followRepository.findFollowedStories(userId);
@@ -327,6 +284,37 @@ public class StoryService {
                 .followTime(dateTimeFormatUtil.format(follow.getFollowTime()))
                 .build();
     }
+
+    private List<StoryResponse> mapToStoryResponseList(List<Story> storyList) {
+        return storyList.stream()
+                .map(this::mapToStoryResponse)
+                .collect(Collectors.toList());
+    }
+
+    private StoryResponse mapToStoryResponse(Story story) {
+        List<Chapter> chapters = chapterRepository.findTop3ChaptersByStoryId(story.getId());
+
+        StoryResponse storyResponse = storyMapper.toStoryResponse(story);
+
+        Set<String> genreNames = story.getGenres().stream()
+                .map(Genre::getName)
+                .collect(Collectors.toSet());
+        storyResponse.setGenres(genreNames);
+
+        List<ChapterResponse> chapterResponses = chapters.stream()
+                .map(chapter -> {
+                    ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
+                    chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
+                    chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
+                    return chapterResponse;
+                })
+                .collect(Collectors.toList());
+
+        storyResponse.setChapters(chapterResponses);
+
+        return storyResponse;
+    }
+
 
     @PostConstruct
     public void cacheStoryViewCountInitially() {

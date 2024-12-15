@@ -32,9 +32,10 @@ public class LevelService {
     LevelMapper levelMapper;
     StringRedisTemplate stringRedisTemplate;
 
-    @PreAuthorize("#userId = authentication.name")
-    public Long increaseLevel(String userId, String chapterId) {
+    AuthenticationService authenticationService;
 
+    public Long increaseLevel(String chapterId) {
+        String userId = authenticationService.getCurrentUserId();
         // kiểm tra xem user đã đọc chapter chưa
         if(hasUserReadChapter(userId, chapterId))
             return null;

@@ -15,5 +15,4 @@ public class GenreCreationRequest {
     String description;
 
     Integer queryCode;
-    String path;
 }

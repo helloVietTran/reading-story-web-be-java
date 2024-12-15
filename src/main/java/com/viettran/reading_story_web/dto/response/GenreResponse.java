@@ -15,5 +15,4 @@ public class GenreResponse {
     String description;
 
     Integer queryCode;
-    String path;
 }

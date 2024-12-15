@@ -56,15 +56,15 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @NonFinal
-    @Value("${jwt.secretKey}")
+    @Value("${app.jwt.secretKey}")
     protected String SECRET_KEY;
 
     @NonFinal
-    @Value("${jwt.access-duration}")
+    @Value("${app.jwt.access-duration}")
     protected long ACCESS_DURATION;
 
     @NonFinal
-    @Value("${jwt.refreshable-duration}")
+    @Value("${app.jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
 
 

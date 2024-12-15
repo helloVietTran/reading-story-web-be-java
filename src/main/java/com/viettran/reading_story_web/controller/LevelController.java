@@ -15,19 +15,15 @@ import org.springframework.web.bind.annotation.*;
 public class LevelController {
     LevelService levelService;
 
-    @PutMapping("/users/{userId}/chapters/{chapterId}")
-    public ApiResponse<Long> increaseLevel(
-            @PathVariable String userId,
-            @PathVariable String chapterId) {
-
+    @PatchMapping("/chapters/{chapterId}")
+    public ApiResponse<Long> increaseLevel(@PathVariable String chapterId) {
        return ApiResponse.<Long>builder()
-               .result(levelService.increaseLevel(userId, chapterId))
+               .result(levelService.increaseLevel(chapterId))
                .build();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public ApiResponse<LevelResponse> getUserLevel(@PathVariable String userId) {
-
         return  ApiResponse.<LevelResponse>builder()
                 .result(levelService.getUserLevel(userId))
                 .build();

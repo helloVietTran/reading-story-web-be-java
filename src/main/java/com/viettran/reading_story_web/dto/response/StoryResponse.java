@@ -38,7 +38,7 @@ public class StoryResponse {
 
     Gender gender;
 
-    String genres;
+    Set<String> genres;
 
     String createdAt;
     String updatedAt;

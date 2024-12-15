@@ -1,5 +1,4 @@
 package com.viettran.reading_story_web.service;
-;
 
 import com.viettran.reading_story_web.dto.request.EmailRequest;
 import com.viettran.reading_story_web.dto.request.SendEmailRequest;

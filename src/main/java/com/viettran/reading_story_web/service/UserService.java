@@ -53,10 +53,9 @@ public class UserService {
     AuthenticationService authenticationService;
     SimpMessagingTemplate simpMessagingTemplate;
 
-
     @NonFinal
-    @Value("app.folder.avatar")
-    String AVATAR_FOLDER;
+    @Value("${app.folder.avatar}")
+    protected String AVATAR_FOLDER;
 
     @NonFinal
     @Value("app.frontend.url")

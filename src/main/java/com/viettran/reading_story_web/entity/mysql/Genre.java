@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 
 @Getter
 @Setter
@@ -26,6 +28,4 @@ public class Genre {
     @Column(unique = true, nullable = false)
     Integer queryCode;
 
-    @Column(unique = true)
-    String path;
 }
