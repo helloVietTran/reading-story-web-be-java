@@ -12,6 +12,7 @@ import com.viettran.reading_story_web.entity.mysql.*;
 import com.viettran.reading_story_web.entity.redis.UserCache;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
+import com.viettran.reading_story_web.mapper.LevelMapper;
 import com.viettran.reading_story_web.mapper.StoryMapper;
 import com.viettran.reading_story_web.mapper.UserMapper;
 import com.viettran.reading_story_web.repository.*;
@@ -43,11 +44,12 @@ public class UserService {
     FollowRepository followRepository;
     ResetPasswordTokenRepository resetPasswordTokenRepository;
     OTPRepository otpRepository;
+    LevelRepository levelRepository;
     UserCacheRepository userCacheRepository;
-    LevelService levelService;
 
     UserMapper userMapper;
     StoryMapper storyMapper;
+    LevelMapper levelMapper;
 
     PasswordEncoder passwordEncoder;
     FileService fileService;
@@ -67,6 +69,7 @@ public class UserService {
 
     public UserResponse createUser(UserCreationRequest request) {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+
         if(userOptional.isPresent())
             throw new AppException(ErrorCode.USER_EXISTED);
 
@@ -75,12 +78,18 @@ public class UserService {
 
         User user = userMapper.toUser(request);
         user.setCreatedAt(Instant.now());
-        user.setCreatedAt(Instant.now());
+        user.setUpdatedAt(Instant.now());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoles(roles);
+        userRepository.save(user);
 
-        levelService.createLevel(user);
-        return userMapper.toUserResponse(userRepository.save(user));
+        Level level = Level.builder()
+                .user(user)
+                .build();
+
+        levelRepository.save(level);
+
+        return userMapper.toUserResponse(user);
     }
 
     public UserResponse getMyInfo() {
@@ -220,14 +229,23 @@ public class UserService {
     }
 
     public List<UserResponse> getTop10UserByChaptersRead(){
-        //Iterable<UserCache> iterable = userCacheRepository.findAll();
+
 
         Pageable pageable = PageRequest.of(0, 10);
         List<User> topUsers = userRepository.findTop10UsersByChaptersRead(pageable);
+        return topUsers.stream().map(user -> {
+            UserResponse response =  userMapper.toUserResponse(user);
+            response.setLevel(levelMapper.toLevelResponse(user.getLevel()));
+
+            return response;
+        }).toList();
+
+       /*
+        Iterable<UserCache> iterable = userCacheRepository.findAll();
+        if(!iterable.iterator().hasNext()){
+        Pageable pageable = PageRequest.of(0, 10);
+        List<User> topUsers = userRepository.findTop10UsersByChaptersRead(pageable);
         return topUsers.stream().map(userMapper::toUserResponse).toList();
-
-       /* if(!iterable.iterator().hasNext()){
-
 
             for(User user: topUsers){
                 userCacheRepository.save(userMapper.toUserCache(user));

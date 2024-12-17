@@ -11,6 +11,7 @@ import org.mapstruct.*;
 public interface UserMapper {
     User toUser(UserCreationRequest request);
 
+    @Mapping(target = "level", ignore = true)
     UserResponse toUserResponse(User user);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

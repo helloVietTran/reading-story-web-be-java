@@ -89,10 +89,11 @@ public class StoryController {
     ApiResponse<List<StoryResponse>> filterStory(
             @RequestParam(required = false) Integer genreCode,
             @RequestParam(defaultValue = "-1") Integer status,
-            @RequestParam(defaultValue = "1") Integer sort
+            @RequestParam(defaultValue = "1") Integer sort,
+            @RequestParam(required = false) String keyword
     ) {
         return ApiResponse.<List<StoryResponse>>builder()
-                .result(storyService.filterStory(genreCode, status, sort))
+                .result(storyService.filterStory(genreCode, status, sort, keyword))
                 .build();
     }
 
@@ -124,7 +125,7 @@ public class StoryController {
 
     @GetMapping("/hot")
     ApiResponse<PageResponse<StoryResponse>> getHotStories(
-            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "32") int size
     ){
         return ApiResponse.<PageResponse<StoryResponse>>builder()
@@ -160,6 +161,13 @@ public class StoryController {
                         minChapter,
                         gender)
                 )
+                .build();
+    }
+
+    @GetMapping("/featured-stories")
+    public ApiResponse<List<StoryResponse>> getFeaturedStories() {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .result(storyService.getFeaturedStories())
                 .build();
     }
 }

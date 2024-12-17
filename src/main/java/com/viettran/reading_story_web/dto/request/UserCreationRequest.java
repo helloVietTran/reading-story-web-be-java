@@ -13,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@PasswordMatchesConstraint
 public class UserCreationRequest {
     @Email(message = "EMAIL_INVALID")
     String email;

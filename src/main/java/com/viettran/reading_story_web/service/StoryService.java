@@ -175,9 +175,10 @@ public class StoryService {
     public List<StoryResponse> filterStory(
             Integer genreCode,
             Integer status,
-            Integer sort
+            Integer sort,
+            String keyword
     ) {
-        List<Story> stories = customStoryRepository.findStories(genreCode, status, sort);
+        List<Story> stories = customStoryRepository.findStories(genreCode, status, sort, keyword);
         return maptoStoryResponseList(stories);
     }
 
@@ -201,7 +202,7 @@ public class StoryService {
 
     public PageResponse<StoryResponse> getHotStories(int page, int size) {
         Sort sorting = Sort.by(Sort.Direction.DESC, "updatedAt");
-        Pageable pageable = PageRequest.of(page, size, sorting);
+        Pageable pageable = PageRequest.of(page-1, size, sorting);
 
         Page<Story> pageData = storyRepository.findByHotTrue(pageable);
         List<Story> stories = pageData.getContent();
@@ -299,10 +300,22 @@ public class StoryService {
                 status,
                 sort,
                 minChapter,
-                gender
+                gender,
+                null
         );
 
         return maptoStoryResponseList(stories);
+    }
+
+    public List<StoryResponse> getFeaturedStories() {
+
+        return storyRepository.findTop5ByViewCountGreaterThan5()
+                .stream().map(story -> {
+                    StoryResponse storyResponse = storyMapper.toStoryResponse(story);
+                    storyResponse.setUpdatedAt(dateTimeFormatUtil.format(story.getUpdatedAt()));
+
+                    return storyResponse;
+                }).toList();
     }
 
     private List<StoryResponse> maptoStoryResponseList(List<Story> stories) {

@@ -68,6 +68,7 @@ public class Story extends BaseEntity {
     @Builder.Default
     boolean hot = false;
 
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     Gender gender = Gender.BOTH;

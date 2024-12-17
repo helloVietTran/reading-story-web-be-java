@@ -42,6 +42,11 @@ public class StoryJobScheduler {
         });
     }
 
+    @Scheduled(cron = "0 0 2 * * *")
+    public void set() {
+
+    }
+
     @Scheduled(cron = "0 */5 * * * ?")
     public void syncDataFromRedisToMySQL() {
         Set<String> keys = stringRedisTemplate.keys("story::*"); // lấy all key
@@ -56,18 +61,34 @@ public class StoryJobScheduler {
                         Integer storyId = Integer.parseInt(keyParts[1]);
 
                         updateStoryViewCountInMySQL(storyId, viewCountStr);
+
+                        // set lại key
+                        stringRedisTemplate.opsForValue().set(key, "0");
                     }
                 }
             }
         }
     }
 
+    @Scheduled(cron = "0 */5 * * * ?")
+    public void updateHotStory() {
+        List<Story> stories = storyRepository.findByViewCountGreaterThanAndHotFalse(10);
+
+        if (!stories.isEmpty()) {
+            for (Story story : stories) {
+                story.setHot(true); // Cập nhật trường hot thành true
+            }
+            storyRepository.saveAll(stories);
+        }
+    }
+
+
     private void updateStoryViewCountInMySQL(Integer storyId, String viewCountStr) {
         int viewCount = Integer.parseInt(viewCountStr);
         Story story = storyRepository.findById(storyId).orElse(null);
 
         if (story != null) {
-            story.setViewCount(viewCount);
+            story.setViewCount(story.getViewCount() + viewCount);
             storyRepository.save(story);
         }
     }

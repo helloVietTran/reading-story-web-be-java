@@ -39,4 +39,10 @@ public interface StoryRepository extends JpaRepository<Story, Integer> {
     Page<Story> findByGenderNot(Gender Gender, Pageable pageable);
 
     Page<Story> findByHotTrue(Pageable pageable);
+
+    List<Story> findByViewCountGreaterThanAndHotFalse(int viewCount);
+
+    @Query("SELECT s FROM Story s WHERE s.viewCount > 5")
+    List<Story> findTop5ByViewCountGreaterThan5();
+
 }

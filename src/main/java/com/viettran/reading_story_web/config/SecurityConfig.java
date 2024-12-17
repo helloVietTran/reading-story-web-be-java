@@ -35,7 +35,7 @@ public class SecurityConfig {
             "/stories/{storyId}/increase-view", "/stories/gender", "/stories/hot", "/stories/find-advanced",
             "/stories/{storyId}/all-chapters", "/stories/{storyId}/chapters",
             "/stories/chapters/{chapterId}", "/stories/{storyId}/chap",
-            "/story-filter",
+            "/stories/featured-stories",
             "/users/{userId}", "/users/top-user",
             "/stories/top-views","/stories/chapters/{chapterId}/resource",
             "/comments/stories/{storyId}", "/comments/chapters/{chapterId}",

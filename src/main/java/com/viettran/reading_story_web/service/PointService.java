@@ -62,35 +62,45 @@ public class PointService {
                 .orElseThrow(() -> new AppException(ErrorCode.POINT_NOT_EXISTED));
 
         Instant now = Instant.now();
+        LocalDate today = now.atZone(ZoneId.systemDefault()).toLocalDate();
 
+        // Lấy ngày từ lastAttendanceDate nếu tồn tại
+        LocalDate lastAttendanceDate = point.getLastAttendanceDate() != null
+                ? point.getLastAttendanceDate().atZone(ZoneId.systemDefault()).toLocalDate()
+                : null;
 
-        if (point.getLastAttendanceDate() == null || !point.getLastAttendanceDate().equals(now)) {
-            point.setLastAttendanceDate(now);
-            point.setConsecutiveAttendanceCount(point.getConsecutiveAttendanceCount() + 1);
-
-            int pointIncrease = 100;
-            // Kiểm tra điểm danh liên tục 7 ngày, thưởng thêm 200 điểm
-            if (point.getConsecutiveAttendanceCount() == 7) {
-                pointIncrease += 200;
-                point.setConsecutiveAttendanceCount(0);
-            }
-            point.setTotal(point.getTotal() + pointIncrease);
-
-            // Thêm lịch sử
-            PointHistory pointHistory = PointHistory.builder()
-                    .point(point)
-                    .type(PointHistoryType.ATTENDANCE)
-                    .pointFluctuation(pointIncrease)
-                    .description("+100")
-                    .build();
-            pointHistory.setCreatedAt(now);
-
-            pointRepository.save(point);
-            pointHistoryRepository.save(pointHistory);
-        } else {
+        // Kiểm tra nếu đã điểm danh trong ngày hiện tại
+        if (lastAttendanceDate != null && lastAttendanceDate.isEqual(today)) {
             throw new AppException(ErrorCode.ALREADY_ATTENDED_TODAY);
         }
+
+        // Cập nhật thông tin điểm danh
+        point.setLastAttendanceDate(now);
+        point.setConsecutiveAttendanceCount(point.getConsecutiveAttendanceCount() + 1);
+
+        int pointIncrease = 100;
+
+        // Kiểm tra điểm danh liên tục 7 ngày, thưởng thêm 200 điểm
+        if (point.getConsecutiveAttendanceCount() == 7) {
+            pointIncrease += 200;
+            point.setConsecutiveAttendanceCount(0);
+        }
+
+        point.setTotal(point.getTotal() + pointIncrease);
+
+        // Thêm lịch sử
+        PointHistory pointHistory = PointHistory.builder()
+                .point(point)
+                .type(PointHistoryType.ATTENDANCE)
+                .pointFluctuation(pointIncrease)
+                .description("+100")
+                .build();
+        pointHistory.setCreatedAt(now);
+
+        pointRepository.save(point);
+        pointHistoryRepository.save(pointHistory);
     }
+
 
     public PointResponse getPoint(){
         String userId = authenticationService.getCurrentUserId();
