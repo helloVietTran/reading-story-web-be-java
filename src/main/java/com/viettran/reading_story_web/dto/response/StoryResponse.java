@@ -1,10 +1,7 @@
 package com.viettran.reading_story_web.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.viettran.reading_story_web.entity.mysql.Chapter;
-import com.viettran.reading_story_web.entity.mysql.Genre;
 import com.viettran.reading_story_web.enums.Gender;
-import com.viettran.reading_story_web.enums.StoryStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -24,9 +21,9 @@ public class StoryResponse {
     String authorName;
 
     String status;
-
     String description;
     String imgSrc;
+
     int viewCount;
     double rate;
     int ratingCount;
@@ -36,12 +33,10 @@ public class StoryResponse {
     int newestChapter;
     boolean hot;
 
-    Gender gender;
-
-    Set<String> genres;
-
     String createdAt;
     String updatedAt;
 
+    Set<String> genres;
     List<ChapterResponse> chapters;
+    Gender gender;
 }

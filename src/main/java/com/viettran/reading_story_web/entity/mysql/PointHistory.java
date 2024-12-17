@@ -30,7 +30,6 @@ public class PointHistory extends BaseEntity {
 
     String description;
 
-    // số điểm biến động
     Integer pointFluctuation;
 
     //relationship

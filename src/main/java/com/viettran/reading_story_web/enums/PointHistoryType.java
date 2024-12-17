@@ -12,4 +12,13 @@ public enum PointHistoryType {
     PointHistoryType(String type) {
         this.type = type;
     }
+
+    public static String fromValue(String value) {
+        for (PointHistoryType pointHistoryType : PointHistoryType.values()) {
+            if (pointHistoryType.name().equalsIgnoreCase(value)) {
+                return pointHistoryType.getType();
+            }
+        }
+        return null;
+    }
 }

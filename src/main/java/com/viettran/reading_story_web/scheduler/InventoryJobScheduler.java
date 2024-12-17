@@ -17,8 +17,7 @@ import java.util.List;
 public class InventoryJobScheduler {
     InventoryRepository inventoryRepository;
 
-    // dọn dẹp bản ghi
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "0 0 2 * * *")// xóa item hết hạn
     public void cleanExpiredInventories() {
         List<Inventory> expiredInventories = inventoryRepository.findByExpirationDateBefore(Instant.now());
         if (!expiredInventories.isEmpty()) {

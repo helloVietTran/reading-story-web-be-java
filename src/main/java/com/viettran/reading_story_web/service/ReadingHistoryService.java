@@ -2,15 +2,18 @@ package com.viettran.reading_story_web.service;
 
 import com.viettran.reading_story_web.dto.request.ReadingHistoryRequest;
 import com.viettran.reading_story_web.dto.response.ReadingHistoryResponse;
+import com.viettran.reading_story_web.dto.response.StoryResponse;
 import com.viettran.reading_story_web.entity.mysql.ReadingHistory;
 import com.viettran.reading_story_web.entity.mysql.Story;
 import com.viettran.reading_story_web.entity.mysql.User;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.ReadingHistoryMapper;
+import com.viettran.reading_story_web.mapper.StoryMapper;
 import com.viettran.reading_story_web.repository.ReadingHistoryRepository;
 import com.viettran.reading_story_web.repository.StoryRepository;
 import com.viettran.reading_story_web.repository.UserRepository;
+import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -32,46 +35,66 @@ public class ReadingHistoryService {
 
     ReadingHistoryMapper readingHistoryMapper;
 
-    @PreAuthorize("#userId == authentication.name")
-    public List<ReadingHistoryResponse> getReadingHistory(String userId){
+    AuthenticationService authenticationService;
+    DateTimeFormatUtil dateTimeFormatUtil;
+
+    public List<ReadingHistoryResponse> getReadingHistory(){
+        String userId = authenticationService.getCurrentUserId();
         List<ReadingHistory> readingHistories = readingHistoryRepository.findByUserId(userId);
 
-        return readingHistories.stream().map(readingHistoryMapper::toReadingHistoryResponse).toList();
+        return readingHistories.stream().map(readingHistory -> {
+            ReadingHistoryResponse response = readingHistoryMapper.toReadingHistoryResponse(readingHistory);
+            Story story = readingHistory.getStory();
+            response.setStory(StoryResponse.builder()
+                            .name(story.getName())
+                            .id(story.getId())
+                            .newestChapter(story.getNewestChapter())
+                            .updatedAt(dateTimeFormatUtil.format(story.getUpdatedAt()))
+                            .slug(story.getSlug())
+                            .imgSrc(story.getImgSrc())
+                    .build());
+            return response;
+
+        }).toList();
     }
 
-    public ReadingHistoryResponse createReadingHistory(ReadingHistoryRequest request) {
-        User user = userRepository.findById(request.getUserId())
+    public ReadingHistoryResponse updateReadingHistory(ReadingHistoryRequest request)
+    {
+        String userId = authenticationService.getCurrentUserId();
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         Story story = storyRepository.findById(request.getStoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
 
         // Tìm lịch sử đọc truyện theo userId và storyId
         Optional<ReadingHistory> optionalHistory =
-                readingHistoryRepository.findByUserIdAndStoryId(request.getUserId(), request.getStoryId());
+                readingHistoryRepository.findByUserIdAndStoryId(userId, request.getStoryId());
 
         ReadingHistory history;
 
-        if (optionalHistory.isPresent()) {// nếu tìm thấy
+        if (optionalHistory.isPresent()) {
             history = optionalHistory.get();
 
             List<String> chaptersRead = history.getChaptersRead();
 
-            // kiểm tra nếu list không chứa phần tử thì add thêm vào lịch sử
+            // kiểm tra nếu chaptersRead không chứa phần tử thì add thêm vào lịch sử
             if(!chaptersRead.contains(request.getChapterRead().toString())){
                 chaptersRead.add(request.getChapterRead().toString());
             }
 
-        } else {// không tìm thấy thì tạo mới bản ghi và lưu
-            history = createReadingHistoryRecord(user ,story ,request);
-        }
+        } else
+            history = createReadingHistory(user ,story ,request);
 
         readingHistoryRepository.save(history);
-
         return readingHistoryMapper.toReadingHistoryResponse(history);
     }
 
-    // hàm tạo reading history
-     ReadingHistory createReadingHistoryRecord(User user,Story story, ReadingHistoryRequest request){
+
+    public void deleteReadingHistory(String readingHistoryId){
+       readingHistoryRepository.deleteById(readingHistoryId);
+    }
+
+    private ReadingHistory createReadingHistory(User user,Story story, ReadingHistoryRequest request){
 
         return ReadingHistory.builder()
                 .story(story)
@@ -79,6 +102,5 @@ public class ReadingHistoryService {
                 .chaptersRead(List.of(request.getChapterRead().toString()))
                 .build();
     }
-
 
 }

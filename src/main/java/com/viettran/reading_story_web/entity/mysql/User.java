@@ -84,6 +84,7 @@ public class User extends BaseEntity {
     @OneToMany
     List<Inventory> inventory;
 
+    @JsonManagedReference
     @OneToMany
     Set<ReadingHistory> readingHistories;
 }

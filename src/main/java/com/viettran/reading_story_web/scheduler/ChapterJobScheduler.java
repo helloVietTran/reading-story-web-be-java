@@ -21,7 +21,7 @@ public class ChapterJobScheduler {
     ChapterRepository chapterRepository;
     StringRedisTemplate stringRedisTemplate;
 
-    @Scheduled(cron = "0 0 3 * * ?")// chạy vào 3h sáng hàng ngày
+    @Scheduled(cron = "0 */5 * * * ?")// đồng bộ 5 phút / lần
     public void cacheChapterViewCountInRedis() {
         // set key cho toàn bộ chapter vào redis
         List<Chapter> chapters = chapterRepository.findAll();
@@ -40,9 +40,8 @@ public class ChapterJobScheduler {
         });
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void syncDataFromRedisToMySQL() {
-        // đồng bộ mỗi 10 phút
         Set<String> keys = stringRedisTemplate.keys("chapter::*"); // lấy all key
 
         if (keys != null) {

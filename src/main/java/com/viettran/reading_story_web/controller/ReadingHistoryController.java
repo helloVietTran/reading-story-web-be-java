@@ -18,21 +18,28 @@ import java.util.List;
 public class ReadingHistoryController {
     ReadingHistoryService readingHistoryService;
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/my")
     ApiResponse<List<ReadingHistoryResponse>> getReadingHistory(
-            @PathVariable String userId
     ){
         return  ApiResponse.<List<ReadingHistoryResponse>>builder()
-                .result(readingHistoryService.getReadingHistory(userId))
+                .result(readingHistoryService.getReadingHistory())
                 .build();
     }
 
-    @PostMapping
-    ApiResponse<ReadingHistoryResponse> createReadingHistory(@RequestBody ReadingHistoryRequest request){
+    @PutMapping
+    ApiResponse<ReadingHistoryResponse> updateReadingHistory(@RequestBody ReadingHistoryRequest request){
         return  ApiResponse.<ReadingHistoryResponse>builder()
-                .result(readingHistoryService.createReadingHistory(request))
+                .result(readingHistoryService.updateReadingHistory(request))
                 .build();
 
     }
 
+    @DeleteMapping("/{readingHistoryId}")
+    ApiResponse<String> deleteReadingHistory(@PathVariable String readingHistoryId){
+        readingHistoryService.deleteReadingHistory(readingHistoryId);
+        return  ApiResponse.<String>builder()
+                .result("Reading history has been removed")
+                .build();
+
+    }
 }

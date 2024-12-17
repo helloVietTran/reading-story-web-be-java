@@ -22,6 +22,7 @@ import com.viettran.reading_story_web.repository.ChapterRepository;
 import com.viettran.reading_story_web.repository.FollowRepository;
 import com.viettran.reading_story_web.repository.StoryCacheRepository;
 import com.viettran.reading_story_web.repository.StoryRepository;
+import com.viettran.reading_story_web.repository.custom.CustomStoryRepository;
 import com.viettran.reading_story_web.scheduler.StoryJobScheduler;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
 import jakarta.annotation.PostConstruct;
@@ -52,6 +53,7 @@ public class StoryService {
     StoryRepository storyRepository;
     FollowRepository followRepository;
     ChapterRepository chapterRepository;
+    CustomStoryRepository customStoryRepository;
 
     StoryMapper storyMapper;
     ChapterMapper chapterMapper;
@@ -75,15 +77,16 @@ public class StoryService {
         String imgSrc = fileService.uploadFile(request.getFile(), STORY_FOLDER);
 
         Story story = storyMapper.toStory(request);
-        Set<Genre> genres =  genreService.getGenresByIds(request.getGenreIds());
+        Set<Genre> genres = genreService.getGenresByIds(request.getGenreIds());
 
         story.setImgSrc(imgSrc);
         story.setGenres(genres);
         story.setCreatedAt(Instant.now());
         story.setUpdatedAt(Instant.now());
+        story.setStatus(request.getStatus());
 
         StoryResponse response = storyMapper.toStoryResponse(storyRepository.save(story));
-        response.setStatus(StoryStatus.getFullNameFromStatus(story.getStatus()));
+        response.setStatus(story.getStatus().getFullName());
         return response;
     }
 
@@ -92,52 +95,52 @@ public class StoryService {
         Pageable pageable = PageRequest.of(page - 1, size, sorting);
 
         Page<Story> pageData = storyRepository.findAll(pageable);
-        List<Story> shuffledContent = pageData.getContent();
-        Collections.shuffle(shuffledContent);
+        List<Story> stories = pageData.getContent();
 
-        List<StoryResponse> storyResponseList = mapToStoryResponseList(shuffledContent);
+        List<StoryResponse> storyResponses = maptoStoryResponseList(stories);
 
         return PageResponse.<StoryResponse>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalElements(pageData.getTotalElements())
                 .totalPages(pageData.getTotalPages())
-                .data(storyResponseList)
+                .data(storyResponses)
                 .build();
     }
 
-    public StoryResponse getStoryById(Integer storyId){
+    public StoryResponse getStoryById(Integer storyId) {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
         StoryResponse response = storyMapper.toStoryResponse(story);
 
         response.setUpdatedAt(dateTimeFormatUtil.format(story.getUpdatedAt()));
         response.setCreatedAt(dateTimeFormatUtil.format(story.getCreatedAt()));
-        response.setStatus(StoryStatus.getFullNameFromStatus(story.getStatus()));
+        response.setStatus(story.getStatus().getFullName());
         response.setGenres(story.getGenres()
                 .stream()
                 .map(Genre::getName)
                 .collect(Collectors.toSet()));
 
-        return  response;
+        return response;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteStory(Integer id){
+    public void deleteStory(Integer id) {
         storyRepository.deleteById(id);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public StoryResponse updateStory(StoryRequest request, Integer storyId){
+    public StoryResponse updateStory(StoryRequest request, Integer storyId) {
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
 
+        story.setUpdatedAt(Instant.now());
         storyMapper.updateStory(story, request);
 
         return storyMapper.toStoryResponse(storyRepository.save(story));
     }
 
-    public PageResponse<StoryResponse> searchStories(String keyword, int page, int size){
+    public PageResponse<StoryResponse> searchStories(String keyword, int page, int size) {
         Sort sort = Sort.by("updatedAt").descending();
         Pageable pageable = PageRequest.of(page - 1, size, sort);
 
@@ -151,16 +154,16 @@ public class StoryService {
                 .data(pageData.getContent().stream().map(storyMapper::toStoryResponse).toList())
                 .build();
     }
-    // id bằng 1 đang lỗi
-    public StoryResponse rateStory(int storyId, RatingRequest request){
+
+    public StoryResponse rateStory(int storyId, RatingRequest request) {
         if (request.getPoint() < 1 || request.getPoint() > 5) {
             throw new AppException(ErrorCode.RATING_POINT_INVALID);
         }
         Story story = storyRepository.findById(storyId)
-                .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
         // làm tròn
         DecimalFormat df = new DecimalFormat("#.##");
-        double roundedNumber = Double.parseDouble(df.format((story.getRate() + request.getPoint())/ story.getRatingCount()));
+        double roundedNumber = Double.parseDouble(df.format((story.getRate() + request.getPoint()) / story.getRatingCount()));
 
         story.setRatingCount(story.getRatingCount() + 1);
         story.setRate(roundedNumber);
@@ -169,28 +172,13 @@ public class StoryService {
         return storyMapper.toStoryResponse(story);
     }
 
-    public PageResponse<StoryResponse> getStoriesByGenreQueryCode(
-            Integer queryCode,
-            StoryStatus status,
-            int sort,
-            int page,
-            int size
+    public List<StoryResponse> filterStory(
+            Integer genreCode,
+            Integer status,
+            Integer sort
     ) {
-        Sort sorting = Sort.by(Sort.Direction.DESC, sort == 2 ? "createdAt" : "updatedAt");
-        Pageable pageable = PageRequest.of(page, size, sorting);
-
-        // Gọi repository
-        var pageData =  storyRepository.findStoriesByGenreQueryCodeAndFilters(queryCode, status, pageable);
-        Collections.shuffle(pageData.getContent());
-
-
-        return PageResponse.<StoryResponse>builder()
-                .currentPage(page)
-                .pageSize(pageData.getSize())
-                .totalElements(pageData.getTotalElements())
-                .totalPages(pageData.getTotalPages())
-                .data(pageData.getContent().stream().map(storyMapper::toStoryResponse).toList())
-                .build();
+        List<Story> stories = customStoryRepository.findStories(genreCode, status, sort);
+        return maptoStoryResponseList(stories);
     }
 
     public PageResponse<StoryResponse> getStoriesByGender(int page, int size, Gender gender) {
@@ -198,17 +186,16 @@ public class StoryService {
         Pageable pageable = PageRequest.of(page - 1, size, sorting);
 
         Page<Story> pageData = storyRepository.findByGenderNot(gender, pageable);
-        List<Story> shuffledContent = pageData.getContent();
-        Collections.shuffle(shuffledContent);
+        List<Story> stories = pageData.getContent();
 
-        List<StoryResponse> storyResponseList = mapToStoryResponseList(shuffledContent);
+        List<StoryResponse> storyResponses = maptoStoryResponseList(stories);
 
         return PageResponse.<StoryResponse>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalElements(pageData.getTotalElements())
                 .totalPages(pageData.getTotalPages())
-                .data(storyResponseList)
+                .data(storyResponses)
                 .build();
     }
 
@@ -217,24 +204,23 @@ public class StoryService {
         Pageable pageable = PageRequest.of(page, size, sorting);
 
         Page<Story> pageData = storyRepository.findByHotTrue(pageable);
-        List<Story> shuffledContent = pageData.getContent();
-        Collections.shuffle(shuffledContent);
+        List<Story> stories = pageData.getContent();
 
-        List<StoryResponse> storyResponseList = mapToStoryResponseList(shuffledContent);
+        List<StoryResponse> storyResponses = maptoStoryResponseList(stories);
 
         return PageResponse.<StoryResponse>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
                 .totalElements(pageData.getTotalElements())
                 .totalPages(pageData.getTotalPages())
-                .data(storyResponseList)
+                .data(storyResponses)
                 .build();
     }
 
     public List<StoryResponse> getTop10StoriesByViewCount() {
         //Iterable<StoryCache> iterable = storyCacheRepository.findAll();
         Pageable pageable = PageRequest.of(0, 10);
-        List<Story> topStories  = storyRepository.findTop10ByOrderByViewCountDesc(pageable);
+        List<Story> topStories = storyRepository.findTop10ByOrderByViewCountDesc(pageable);
 
         return topStories.stream().map(storyMapper::toStoryResponse).toList();
 
@@ -255,26 +241,39 @@ public class StoryService {
         }*/
     }
 
-    public List<FollowResponse> getFollowedStories(){
+    public List<FollowResponse> getFollowedStories() {
         String userId = authenticationService.getCurrentUserId();
-        List<Follow> followedStories= followRepository.findFollowedStories(userId);
+        List<Follow> followedStories = followRepository.findFollowedStories(userId);
 
         return followedStories.stream()
-                .map(follow -> FollowResponse.builder()
-                        .id(follow.getId())
-                        .story(storyMapper.toStoryResponse(follow.getStory()))
-                        .followTime(dateTimeFormatUtil.format(follow.getFollowTime()))
-                        .build())
+                .map(follow -> {
+                    Story story = follow.getStory();
+                    return FollowResponse.builder()
+                            .id(follow.getId())
+                            .story(
+                                    StoryResponse.builder()
+                                            .imgSrc(story.getImgSrc())
+                                            .id(story.getId())
+                                            .name(story.getName())
+                                            .slug(story.getSlug())
+                                            .updatedAt(dateTimeFormatUtil.format(story.getUpdatedAt()))
+                                            .newestChapter(story.getNewestChapter())
+                                            .viewCount(story.getViewCount())
+                                            .build()
+                            )
+                            .followTime(dateTimeFormatUtil.format(follow.getFollowTime()))
+                            .build();
+                })
                 .toList();
 
     }
 
-    public FollowResponse getFollowedStoryByUserIdAndStoryId(int storyId){
+    public FollowResponse getFollowedStoryByUserIdAndStoryId(int storyId) {
         String userId = authenticationService.getCurrentUserId();
 
         Optional<Follow> followOptional = followRepository.findByUserIdAndStoryId(userId, storyId);
-        if(followOptional.isEmpty())
-            throw  new AppException(ErrorCode.FOLLOWED_STORY);
+        if (followOptional.isEmpty())
+            throw new AppException(ErrorCode.FOLLOWED_STORY);
         Follow follow = followOptional.get();
 
         return FollowResponse
@@ -285,41 +284,59 @@ public class StoryService {
                 .build();
     }
 
-    private List<StoryResponse> mapToStoryResponseList(List<Story> storyList) {
-        return storyList.stream()
-                .map(this::mapToStoryResponse)
-                .collect(Collectors.toList());
+
+    public List<StoryResponse> filterAdvanced
+            (List<Integer> genreCodes,
+             List<Integer> notGenreCodes,
+             Integer status,
+             Integer sort,
+             Integer minChapter,
+             Integer gender
+            ) {
+        List<Story> stories = customStoryRepository.findStoriesAdvanced(
+                genreCodes,
+                notGenreCodes,
+                status,
+                sort,
+                minChapter,
+                gender
+        );
+
+        return maptoStoryResponseList(stories);
     }
 
-    private StoryResponse mapToStoryResponse(Story story) {
-        List<Chapter> chapters = chapterRepository.findTop3ChaptersByStoryId(story.getId());
+    private List<StoryResponse> maptoStoryResponseList(List<Story> stories) {
+        return stories.stream().map(story -> {
+            StoryResponse storyResponse = storyMapper.toStoryResponse(story);
 
-        StoryResponse storyResponse = storyMapper.toStoryResponse(story);
+            Set<String> genreNames = story.getGenres().stream()
+                    .map(Genre::getName)
+                    .collect(Collectors.toSet());
+            storyResponse.setGenres(genreNames);
 
-        Set<String> genreNames = story.getGenres().stream()
-                .map(Genre::getName)
-                .collect(Collectors.toSet());
-        storyResponse.setGenres(genreNames);
+            List<Chapter> chapters = chapterRepository.findTop3ChaptersByStoryId(story.getId());
 
-        List<ChapterResponse> chapterResponses = chapters.stream()
-                .map(chapter -> {
-                    ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
-                    chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
-                    chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
-                    return chapterResponse;
-                })
-                .collect(Collectors.toList());
+            List<ChapterResponse> chapterResponses = chapters.stream()
+                    .map(chapter -> {
+                        ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
+                        chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
+                        chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
+                        return chapterResponse;
+                    })
+                    .collect(Collectors.toList());
 
-        storyResponse.setChapters(chapterResponses);
+            storyResponse.setChapters(chapterResponses);
+            storyResponse.setStatus(story.getStatus().getFullName());
+            storyResponse.setCreatedAt(dateTimeFormatUtil.format(story.getCreatedAt()));
+            storyResponse.setUpdatedAt(dateTimeFormatUtil.format(story.getUpdatedAt()));
 
-        return storyResponse;
+            return storyResponse;
+        }).toList();
     }
-
 
     @PostConstruct
     public void cacheStoryViewCountInitially() {
-       storyJobScheduler.syncDataFromRedisToMySQL();
-       storyJobScheduler.cacheStoryViewCountInRedis();
+        storyJobScheduler.syncDataFromRedisToMySQL();
+        storyJobScheduler.cacheStoryViewCountInRedis();
     }
-
 }

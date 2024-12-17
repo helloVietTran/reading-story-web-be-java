@@ -3,8 +3,10 @@ package com.viettran.reading_story_web.config;
 import java.time.Instant;
 import java.util.HashSet;
 
+import com.viettran.reading_story_web.entity.mysql.Level;
 import com.viettran.reading_story_web.entity.mysql.Role;
 import com.viettran.reading_story_web.entity.mysql.User;
+import com.viettran.reading_story_web.repository.LevelRepository;
 import com.viettran.reading_story_web.repository.RoleRepository;
 import com.viettran.reading_story_web.repository.UserRepository;
 import org.springframework.boot.ApplicationRunner;
@@ -29,7 +31,7 @@ public class ApplicationInitConfig {
     static final String ADMIN_PASSWORD = "adminweb";
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
+    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, LevelRepository levelRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByEmail(ADMIN_EMAIL).isEmpty()) {
@@ -51,8 +53,6 @@ public class ApplicationInitConfig {
                 roles.add(adminRole);
                 roles.add(userRole);
 
-                log.info(roles.toString());
-
                 User user = User.builder()
                         .email(ADMIN_EMAIL)
                         .name("admin")
@@ -65,7 +65,13 @@ public class ApplicationInitConfig {
 
                 userRepository.save(user);
 
-                log.warn("admin user has been created with default password: adminweb, please change it");
+                Level level = Level.builder()
+                        .user(user)
+                        .build();
+
+                levelRepository.save(level);
+
+                log.warn("admin has been created with default password: adminweb, please change it");
             }
 
         };

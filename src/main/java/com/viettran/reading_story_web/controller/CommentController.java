@@ -38,18 +38,18 @@ public class CommentController {
                 .build();
     }
 
-    @DeleteMapping("/{commentId}/users/{userId}")
+    @DeleteMapping("/{commentId}")
     ApiResponse<String> deleteComment(
             @PathVariable String commentId,
             @PathVariable String userId
     ){
-        commentService.deleteComment(commentId, userId);
+        commentService.deleteComment(commentId);
         return ApiResponse.<String>builder()
                 .result("Comment has been deleted")
                 .build();
     }
 
-    // gọi khi vào trang detail truyện
+    // call in story detail
     @GetMapping("/stories/{storyId}")
     ApiResponse<PageResponse<CommentResponse>> getCommentsByStoryId(
             @PathVariable Integer storyId,
@@ -63,7 +63,7 @@ public class CommentController {
                 .build();
     }
 
-    // gọi khi vào chapter detail
+    // call in chapter detail
     @GetMapping("/chapters/{chapterId}")
     ApiResponse<PageResponse<CommentResponse>> getCommentsByChapterId(
             @PathVariable String chapterId,
@@ -83,13 +83,12 @@ public class CommentController {
                 .build();
     }
 
-
-    @GetMapping("/users/{userId}")
+    @GetMapping("/my")
     ApiResponse<PageResponse<CommentResponse>> getMyComment(
-            @PathVariable String userId
+
     ){
         return ApiResponse.<PageResponse<CommentResponse>>builder()
-                .result(commentService.getMyComment(userId))
+                .result(commentService.getMyComment())
                 .build();
     }
 }

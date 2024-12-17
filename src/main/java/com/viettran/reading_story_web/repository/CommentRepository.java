@@ -33,4 +33,6 @@ public interface CommentRepository extends JpaRepository<Comment, String> {
    Page<Comment> findByChapterIdAndParentCommentIdIsNull(String chapterId, Pageable pageable);
 
    Page<Comment> findAll(Pageable pageable);
+
+   Page<Comment> findAllByUserId(Pageable pageale, String userId);
 }

@@ -5,6 +5,7 @@ import com.viettran.reading_story_web.repository.StoryRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -21,7 +23,7 @@ public class StoryJobScheduler {
     StoryRepository storyRepository;
     StringRedisTemplate stringRedisTemplate;
 
-    @Scheduled(cron = "0 0 3 * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void cacheStoryViewCountInRedis() {
         // set key cho toàn bộ chapter vào redis
         List<Story> stories = storyRepository.findAll();
@@ -30,7 +32,7 @@ public class StoryJobScheduler {
             if (connection instanceof StringRedisConnection) {
                 StringRedisConnection stringRedisConn = (StringRedisConnection) connection;
                 for (Story story : stories) {
-                    String key = "chapter::" + story.getId();
+                    String key = "story::" + story.getId();
                     stringRedisConn.set(key, String.valueOf(story.getViewCount()));
                 }
             } else {
@@ -40,9 +42,8 @@ public class StoryJobScheduler {
         });
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void syncDataFromRedisToMySQL() {
-        // đồng bộ mỗi 10 phút
         Set<String> keys = stringRedisTemplate.keys("story::*"); // lấy all key
 
         if (keys != null) {

@@ -1,6 +1,7 @@
 package com.viettran.reading_story_web.entity.mysql;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.viettran.reading_story_web.entity.base.BaseEntity;
@@ -26,9 +27,11 @@ public class ReadingHistory extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
+    @JsonBackReference
     @ManyToOne
     User user;
 
+    @JsonBackReference
     @ManyToOne
     Story story;
 

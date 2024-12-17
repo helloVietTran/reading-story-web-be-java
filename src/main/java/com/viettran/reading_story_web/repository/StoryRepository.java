@@ -26,7 +26,7 @@ public interface StoryRepository extends JpaRepository<Story, Integer> {
 
     @Query("SELECT s FROM Story s JOIN s.genres g " +
             "WHERE g.queryCode = :queryCode " +
-            "AND (:status IS NULL OR s.status = :status) ")
+            "AND (s.status = :status) ")
     Page<Story> findStoriesByGenreQueryCodeAndFilters(
             @Param("queryCode") Integer queryCode,
             @Param("status") StoryStatus status,

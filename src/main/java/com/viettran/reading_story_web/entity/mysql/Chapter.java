@@ -34,7 +34,6 @@ public class Chapter extends BaseEntity {
     @Builder.Default
     int viewCount = 0;
 
-    @Column(unique = true)
     String slug;
 
     // relationship

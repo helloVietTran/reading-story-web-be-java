@@ -68,6 +68,7 @@ public class ChapterService {
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
         story.setNewestChapter(story.getNewestChapter() + 1);
+        story.setUpdatedAt(Instant.now());
 
         chapter.setStory(story);
 
@@ -148,6 +149,7 @@ public class ChapterService {
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(()-> new AppException(ErrorCode.CHAPTER_NOT_EXISTED));
 
+        chapter.setUpdatedAt(Instant.now());
         chapterMapper.updateChapter(chapter, request);
 
         List<Map<String, String>> uploadedList = fileService.uploadFiles(request.getFiles(), CHAPTER_FOLDER );

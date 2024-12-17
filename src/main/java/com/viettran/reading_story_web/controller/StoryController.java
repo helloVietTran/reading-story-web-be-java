@@ -85,16 +85,14 @@ public class StoryController {
                 .build();
     }
 
-    @GetMapping("/by-genre")
-    ApiResponse<PageResponse<StoryResponse>> getStoriesByGenre(
-            @RequestParam Integer queryCode,
-            @RequestParam(required = false) StoryStatus status,
-            @RequestParam(required = false, defaultValue = "1") int sort,
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "32") int size
+    @GetMapping("/find-story")
+    ApiResponse<List<StoryResponse>> filterStory(
+            @RequestParam(required = false) Integer genreCode,
+            @RequestParam(defaultValue = "-1") Integer status,
+            @RequestParam(defaultValue = "1") Integer sort
     ) {
-        return ApiResponse.<PageResponse<StoryResponse>>builder()
-                .result(storyService.getStoriesByGenreQueryCode(queryCode, status, sort, page, size))
+        return ApiResponse.<List<StoryResponse>>builder()
+                .result(storyService.filterStory(genreCode, status, sort))
                 .build();
     }
 
@@ -140,6 +138,28 @@ public class StoryController {
     ){
         return ApiResponse.<FollowResponse>builder()
                 .result(storyService.getFollowedStoryByUserIdAndStoryId(storyId))
+                .build();
+    }
+
+
+    @GetMapping("/find-advanced")
+    ApiResponse<List<StoryResponse>> filterAdvanced(
+            @RequestParam(required = false) List<Integer> genreCodes,
+            @RequestParam(required = false) List<Integer> notGenreCodes,
+            @RequestParam(defaultValue = "-1") Integer status,
+            @RequestParam(defaultValue = "1") Integer sort,
+            @RequestParam(required = false, defaultValue = "0") Integer minChapter,
+            @RequestParam(required = false, defaultValue = "-1") Integer gender
+
+    ) {
+        return ApiResponse.<List<StoryResponse>>builder()
+                .result(storyService.filterAdvanced(genreCodes,
+                        notGenreCodes,
+                        status,
+                        sort,
+                        minChapter,
+                        gender)
+                )
                 .build();
     }
 }

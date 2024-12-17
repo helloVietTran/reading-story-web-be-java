@@ -24,7 +24,7 @@ public class PointController {
         return ApiResponse.<Void>builder().build();
     }
 
-    @GetMapping
+    @GetMapping("/my")
     public ApiResponse<PointResponse> getPoint(){
         return ApiResponse.<PointResponse>builder()
                 .result(pointService.getPoint())

@@ -1,8 +1,6 @@
 package com.viettran.reading_story_web.entity.mysql;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.viettran.reading_story_web.entity.base.BaseEntity;
 import com.viettran.reading_story_web.enums.Gender;
 import com.viettran.reading_story_web.enums.StoryStatus;
@@ -35,8 +33,7 @@ public class Story extends BaseEntity {
     String authorName;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    StoryStatus status = StoryStatus.IN_PROGRESS;
+    StoryStatus status;
 
     @Column(columnDefinition = "TEXT")
     String description = "";
@@ -61,7 +58,8 @@ public class Story extends BaseEntity {
 
     String slug;
 
-    Long likeCount;
+    @Builder.Default
+    Long likeCount = 0L;
 
     @Builder.Default
     int newestChapter = 0;
@@ -96,6 +94,7 @@ public class Story extends BaseEntity {
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Follow> follows;
 
+    @JsonManagedReference
     @OneToMany
     Set<ReadingHistory> readingHistories;
 

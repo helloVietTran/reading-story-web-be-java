@@ -14,6 +14,6 @@ import java.util.List;
 public class ReadingHistoryResponse {
     String id;
 
-    Story story;
+    StoryResponse story;
     List<String> chaptersRead;
 }

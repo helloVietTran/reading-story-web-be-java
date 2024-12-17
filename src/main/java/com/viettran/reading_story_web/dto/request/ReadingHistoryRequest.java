@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ReadingHistoryRequest {
-    String userId;
     int storyId;
 
     // chapter đã đọc

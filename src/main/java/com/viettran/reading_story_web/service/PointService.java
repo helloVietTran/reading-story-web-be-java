@@ -16,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -50,7 +49,7 @@ public class PointService {
                 .user(user)
                 .total(0)
                 .consecutiveAttendanceCount(0)
-                .lastAttendanceDate(Instant.now())
+                .lastAttendanceDate(null)
                 .build();
 
         return pointRepository.save(newPoint);
@@ -63,14 +62,9 @@ public class PointService {
                 .orElseThrow(() -> new AppException(ErrorCode.POINT_NOT_EXISTED));
 
         Instant now = Instant.now();
-        LocalDate today = now.atZone(ZoneId.systemDefault()).toLocalDate();
 
-        LocalDate lastAttendanceDate = null;
-        if (point.getLastAttendanceDate() != null) {
-            lastAttendanceDate = point.getLastAttendanceDate().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
 
-        if (lastAttendanceDate == null || !lastAttendanceDate.equals(today)) {
+        if (point.getLastAttendanceDate() == null || !point.getLastAttendanceDate().equals(now)) {
             point.setLastAttendanceDate(now);
             point.setConsecutiveAttendanceCount(point.getConsecutiveAttendanceCount() + 1);
 
@@ -87,6 +81,7 @@ public class PointService {
                     .point(point)
                     .type(PointHistoryType.ATTENDANCE)
                     .pointFluctuation(pointIncrease)
+                    .description("+100")
                     .build();
             pointHistory.setCreatedAt(now);
 
@@ -97,14 +92,14 @@ public class PointService {
         }
     }
 
-
     public PointResponse getPoint(){
         String userId = authenticationService.getCurrentUserId();
 
         Point point = pointRepository.findByUserId(userId)
                 .orElseGet(() -> createPoint(userId));;
 
-        return pointMapper.toPointResponse(point);
+        return  pointMapper.toPointResponse(point);
+
     }
 
 
@@ -127,6 +122,16 @@ public class PointService {
 
         Inventory inventory = new Inventory(user, avatarFrame, 86400);
 
+        // thêm lịch sử
+        PointHistory pointHistory = PointHistory.builder()
+                .point(point)
+                .type(PointHistoryType.BUY_ITEMS)
+                .pointFluctuation(100)
+                .description("-100")
+                .build();
+        pointHistory.setCreatedAt(Instant.now());
+
+        pointHistoryRepository.save(pointHistory);
         pointRepository.save(point);
         userRepository.save(user);
         inventoryRepository.save(inventory);

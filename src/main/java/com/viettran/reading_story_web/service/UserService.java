@@ -44,6 +44,8 @@ public class UserService {
     ResetPasswordTokenRepository resetPasswordTokenRepository;
     OTPRepository otpRepository;
     UserCacheRepository userCacheRepository;
+    LevelService levelService;
+
     UserMapper userMapper;
     StoryMapper storyMapper;
 
@@ -68,16 +70,16 @@ public class UserService {
         if(userOptional.isPresent())
             throw new AppException(ErrorCode.USER_EXISTED);
 
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById("USER").ifPresent(roles::add);
+
         User user = userMapper.toUser(request);
         user.setCreatedAt(Instant.now());
         user.setCreatedAt(Instant.now());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById("USER").ifPresent(roles::add);
         user.setRoles(roles);
 
-        // gửi mail
+        levelService.createLevel(user);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -97,6 +99,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+        user.setUpdatedAt(Instant.now());
         userMapper.updateUser(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -130,7 +133,7 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setImgSrc(url);
-
+        user.setUpdatedAt(Instant.now());
         return userMapper.toUserResponse(userRepository.save(user));
     }
     public FollowResponse followStory(FollowRequest request) {
@@ -193,6 +196,7 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_CONFIRM_PASSWORD);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUpdatedAt(Instant.now());
         userRepository.save(user);
     }
 

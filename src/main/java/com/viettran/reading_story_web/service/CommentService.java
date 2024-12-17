@@ -72,7 +72,10 @@ public class CommentService {
         comment.setCreatedAt(Instant.now());
         comment.setUpdatedAt(Instant.now());
 
+        story.setCommentCount(story.getCommentCount() + 1);
+
         commentRepository.save(comment);
+        storyRepository.save(story);
 
         CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
         commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
@@ -81,9 +84,9 @@ public class CommentService {
         return commentResponse;
     }
 
-    @PreAuthorize("#userId == authentication.name")
-    public CommentResponse updateComment(CommentUpdationRequest request, String commentId, String userId){
-        Optional<Comment> commentOptional = commentRepository.findByIdAndUserId(commentId, userId);
+    @PreAuthorize("#id == authentication.name")
+    public CommentResponse updateComment(CommentUpdationRequest request, String commentId, String id){
+        Optional<Comment> commentOptional = commentRepository.findByIdAndUserId(commentId, id);
         if(commentOptional.isEmpty())
             throw new AppException(ErrorCode.COMMENT_NOT_EXISTED);
 
@@ -92,8 +95,8 @@ public class CommentService {
         return commentMapper.toCommentResponse(commentRepository.save(commentOptional.get()));
     }
 
-    @PreAuthorize("#userId == authentication.name")
-    public void deleteComment(String commentId, String userId){
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteComment(String commentId){
         commentRepository.deleteById(commentId);
     }
 
@@ -169,12 +172,12 @@ public class CommentService {
         return buildPageResponse(page, pageData, commentResponseList);
     }
 
-    // lấy comment của bản thân
-    @PreAuthorize("#id == authentication.name")
-    public PageResponse<CommentResponse> getMyComment(String id){
+    public PageResponse<CommentResponse> getMyComment(){
+        String userId = authenticationService.getCurrentUserId();
+
         Sort sort = Sort.by("createdAt").descending();
         Pageable pageable = PageRequest.of(0, 10, sort);
-        var pageData = commentRepository.findAll(pageable);
+        var pageData = commentRepository.findAllByUserId(pageable, userId);
 
         return PageResponse.<CommentResponse>builder()
                 .currentPage(0)
@@ -183,7 +186,13 @@ public class CommentService {
                 .totalPages(pageData.getTotalPages())
                 .data(pageData.getContent().stream().map(comment->{
                     CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
-
+                    commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
+                    commentResponse.setStory(
+                            StoryResponse.builder()
+                                    .imgSrc(comment.getStory().getImgSrc())
+                                    .name(comment.getStory().getName())
+                                    .build()
+                    );
 
                     return commentResponse;
                 }).toList())

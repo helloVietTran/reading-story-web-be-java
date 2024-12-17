@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class LevelController {
     LevelService levelService;
 
-    @PatchMapping("/chapters/{chapterId}")
+    @PatchMapping("/increase/{chapterId}")
     public ApiResponse<Long> increaseLevel(@PathVariable String chapterId) {
        return ApiResponse.<Long>builder()
                .result(levelService.increaseLevel(chapterId))

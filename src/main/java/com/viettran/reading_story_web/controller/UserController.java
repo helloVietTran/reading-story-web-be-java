@@ -129,7 +129,5 @@ public class UserController {
                 .result(userService.getTop10UserByChaptersRead())
                 .build();
     }
-
-
 }
 

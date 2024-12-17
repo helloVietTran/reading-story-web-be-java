@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum StoryStatus {
-    IN_PROGRESS("Đang tiến hành"),
+    IN_PROCESS("Đang tiến hành"),
     COMPLETED("Đã hoàn thành" ),
     UPCOMING("Sắp phát hành");
 
@@ -14,7 +14,4 @@ public enum StoryStatus {
             this.fullName = fullName;
     }
 
-    public static String getFullNameFromStatus(StoryStatus storyStatus) {
-        return storyStatus.getFullName();
-    }
 }
