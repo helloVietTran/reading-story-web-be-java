@@ -1,23 +1,19 @@
 package com.viettran.reading_story_web.service;
 
-import com.viettran.reading_story_web.dto.request.RatingRequest;
 import com.viettran.reading_story_web.dto.request.StoryRequest;
 import com.viettran.reading_story_web.dto.response.ChapterResponse;
 import com.viettran.reading_story_web.dto.response.FollowResponse;
 import com.viettran.reading_story_web.dto.response.PageResponse;
 import com.viettran.reading_story_web.dto.response.StoryResponse;
-import com.viettran.reading_story_web.entity.redis.StoryCache;
 import com.viettran.reading_story_web.entity.mysql.Chapter;
 import com.viettran.reading_story_web.entity.mysql.Follow;
 import com.viettran.reading_story_web.entity.mysql.Genre;
 import com.viettran.reading_story_web.entity.mysql.Story;
 import com.viettran.reading_story_web.enums.Gender;
-import com.viettran.reading_story_web.enums.StoryStatus;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.ChapterMapper;
 import com.viettran.reading_story_web.mapper.StoryMapper;
-import com.viettran.reading_story_web.mapper.UserMapper;
 import com.viettran.reading_story_web.repository.ChapterRepository;
 import com.viettran.reading_story_web.repository.FollowRepository;
 import com.viettran.reading_story_web.repository.StoryCacheRepository;
@@ -155,18 +151,22 @@ public class StoryService {
                 .build();
     }
 
-    public StoryResponse rateStory(int storyId, RatingRequest request) {
-        if (request.getPoint() < 1 || request.getPoint() > 5) {
+    public StoryResponse rateStory(int storyId, int point) {
+        if (point < 1 || point > 5)
             throw new AppException(ErrorCode.RATING_POINT_INVALID);
-        }
+
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
-        // làm tròn
-        DecimalFormat df = new DecimalFormat("#.##");
-        double roundedNumber = Double.parseDouble(df.format((story.getRate() + request.getPoint()) / story.getRatingCount()));
 
         story.setRatingCount(story.getRatingCount() + 1);
-        story.setRate(roundedNumber);
+        story.setTotalRatingPoint(story.getTotalRatingPoint() + point);
+
+        double newRate = (double) story.getTotalRatingPoint() / story.getRatingCount();
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        newRate = Double.parseDouble(df.format(newRate));
+
+        story.setRate(newRate);
 
         storyRepository.save(story);
         return storyMapper.toStoryResponse(story);

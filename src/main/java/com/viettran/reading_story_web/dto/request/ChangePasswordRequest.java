@@ -1,6 +1,5 @@
 package com.viettran.reading_story_web.dto.request;
 
-import com.viettran.reading_story_web.validator.PasswordMatchesConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,4 +17,7 @@ public class ChangePasswordRequest {
     String password;
 
     String confirmPassword;
+    String token;
+
+    String userId;
 }

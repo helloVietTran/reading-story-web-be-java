@@ -31,7 +31,7 @@ public class ChapterJobScheduler {
                 StringRedisConnection stringRedisConn = (StringRedisConnection) connection;
                 for (Chapter chapter : chapters) {
                     String key = "chapter::" + chapter.getId();
-                    stringRedisConn.set(key, String.valueOf(chapter.getViewCount()));
+                    stringRedisConn.set(key, "0");
                 }
             } else {
                 throw new IllegalStateException("Connection is not a StringRedisConnection");

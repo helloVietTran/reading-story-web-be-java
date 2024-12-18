@@ -29,7 +29,6 @@ public class ResetPasswordToken extends ExpirationBaseEntity {
     @JoinColumn(name = "user_id")
     User user;
 
-
     public ResetPasswordToken(User user, int seconds) {
         super(seconds);
         this.user = user;

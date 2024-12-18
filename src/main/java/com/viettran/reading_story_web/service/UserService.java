@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.*;
 
 import com.viettran.reading_story_web.dto.request.*;
+import com.viettran.reading_story_web.dto.response.EmailResponse;
 import com.viettran.reading_story_web.dto.response.FollowResponse;
 import com.viettran.reading_story_web.dto.response.UserResponse;
 import com.viettran.reading_story_web.entity.mysql.*;
@@ -43,7 +44,6 @@ public class UserService {
     StoryRepository storyRepository;
     FollowRepository followRepository;
     ResetPasswordTokenRepository resetPasswordTokenRepository;
-    OTPRepository otpRepository;
     LevelRepository levelRepository;
     UserCacheRepository userCacheRepository;
 
@@ -53,6 +53,7 @@ public class UserService {
 
     PasswordEncoder passwordEncoder;
     FileService fileService;
+    EmailService emailService;
 
     AuthenticationService authenticationService;
     SimpMessagingTemplate simpMessagingTemplate;
@@ -61,16 +62,12 @@ public class UserService {
     @Value("${app.folder.avatar}")
     protected String AVATAR_FOLDER;
 
-    @NonFinal
-    @Value("app.frontend.url")
-    String FRONTEND_URL;
-
     static final String TOP_USER = "topUser";
 
     public UserResponse createUser(UserCreationRequest request) {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
-        if(userOptional.isPresent())
+        if (userOptional.isPresent())
             throw new AppException(ErrorCode.USER_EXISTED);
 
         HashSet<Role> roles = new HashSet<>();
@@ -99,7 +96,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        return userMapper.toUserResponse(user);
+        UserResponse response = userMapper.toUserResponse(user);
+
+        response.setLevel(levelMapper.toLevelResponse(user.getLevel()));
+        return response;
     }
 
 
@@ -119,7 +119,7 @@ public class UserService {
         String email = context.getAuthentication().getName();
 
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty())
+        if (optionalUser.isEmpty())
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
 
         userRepository.deleteByEmail(email);
@@ -140,24 +140,25 @@ public class UserService {
         String url = fileService.uploadFile(request.getFile(), AVATAR_FOLDER);
 
         User user = userRepository.findById(id)
-                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setImgSrc(url);
         user.setUpdatedAt(Instant.now());
         return userMapper.toUserResponse(userRepository.save(user));
     }
+
     public FollowResponse followStory(FollowRequest request) {
         String userId = authenticationService.getCurrentUserId();
 
-       if(followRepository.existsByUserIdAndStoryId(userId, request.getStoryId()))
-           throw new AppException(ErrorCode.FOLLOWED_STORY);
+        if (followRepository.existsByUserIdAndStoryId(userId, request.getStoryId()))
+            throw new AppException(ErrorCode.FOLLOWED_STORY);
 
-       Story story = storyRepository.findById(request.getStoryId())
+        Story story = storyRepository.findById(request.getStoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
 
-       User user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-       Follow follow = Follow.builder()
+        Follow follow = Follow.builder()
                 .story(story)
                 .user(user)
                 .followTime(Instant.now())
@@ -173,7 +174,7 @@ public class UserService {
                 .build();
     }
 
-    public void unfollowStory(Integer storyId, String followId){
+    public void unfollowStory(Integer storyId, String followId) {
         followRepository.deleteById(followId);
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
@@ -184,24 +185,47 @@ public class UserService {
         simpMessagingTemplate.convertAndSend("/topic/followers/" + storyId, story.getFollower());
     }
 
-    public void forgotPassword(ForgotPasswordRequest request){
+    public EmailResponse forgotPassword(ForgotPasswordRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        String rawResetPasswordToken = generateResetPasswordToken(user, 60*15);
+        String rawResetPasswordToken = generateResetPasswordToken(user, 60 * 15);
 
-        //gửi mail chứa link
+        return emailService.sendResetPasswordEmail(rawResetPasswordToken, user);
+    }
+
+    public void resetPassword(ChangePasswordRequest request) {
+        Optional<ResetPasswordToken> tokenOptional = resetPasswordTokenRepository
+                .findFirstByUserIdAndStatusAndExpirationDateAfterOrderByCreatedDateAsc
+                        (request.getUserId(), "unused", Instant.now());
+
+        if (tokenOptional.isEmpty())
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        ResetPasswordToken token = tokenOptional.get();
+
+        if (!request.getPassword().equals(request.getConfirmPassword()))
+            throw new AppException(ErrorCode.INVALID_CONFIRM_PASSWORD);
+
+        if (!passwordEncoder.matches(request.getToken(), token.getToken()))
+            throw new AppException(ErrorCode.INVALID_TOKEN);
+
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
     }
 
     public void changePassword(ChangePasswordRequest request) {
         String userId = authenticationService.getCurrentUserId();
 
         User user = userRepository.findById(userId)
-                        .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        if(!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword()))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
-        if(!request.getPassword().equals(request.getConfirmPassword()))
+        if (!request.getPassword().equals(request.getConfirmPassword()))
             throw new AppException(ErrorCode.INVALID_CONFIRM_PASSWORD);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -209,32 +233,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void verifyOTP(VerifyOTPRequest request){
 
-        OTP otp = otpRepository
-                .findByEmailAndStatusAndExpirationDateAfter(request.getEmail(), "unused", Instant.now())
-                .orElseThrow(() -> new AppException(ErrorCode.TOKEN_NOT_EXISTED));
-
-        if(passwordEncoder.matches(request.getOtp(), otp.getOtp()))
-            throw new AppException(ErrorCode.INVALID_TOKEN);
-
-        otp.setStatus("unused");
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-        user.setIsVerified(true);
-
-        otpRepository.save(otp);
-        userRepository.save(user);
-    }
-
-    public List<UserResponse> getTop10UserByChaptersRead(){
-
+    public List<UserResponse> getTop10UserByChaptersRead() {
 
         Pageable pageable = PageRequest.of(0, 10);
+
         List<User> topUsers = userRepository.findTop10UsersByChaptersRead(pageable);
         return topUsers.stream().map(user -> {
-            UserResponse response =  userMapper.toUserResponse(user);
+            UserResponse response = userMapper.toUserResponse(user);
             response.setLevel(levelMapper.toLevelResponse(user.getLevel()));
 
             return response;
@@ -261,21 +267,13 @@ public class UserService {
 
     String generateResetPasswordToken(User user, int expirationSeconds) {
 
-        Optional<ResetPasswordToken> lastToken = resetPasswordTokenRepository
-                .findFirstByUserIdOrderByCreatedDateDesc(user.getId());
-
-        // sau 15 phút 1 giây mới cho tạo token mới, để tránh việc request nhiều token
-        if (lastToken.isPresent() &&
-                lastToken.get().getCreatedDate().plus(Duration.ofSeconds(15 * 60 + 1)).isAfter(Instant.now())) {
-            throw new AppException(ErrorCode.NOT_ENOUGH_TIME_REQUIRED);
-        }
-
-        String rawToken = UUID.randomUUID().toString(); // Tạo token ngẫu nhiên
+        String rawToken = UUID.randomUUID().toString();
         String hashedToken = passwordEncoder.encode(rawToken); // Hash token
 
         ResetPasswordToken resetToken = new ResetPasswordToken(user, expirationSeconds);
         resetToken.setToken(hashedToken);
         resetToken.setStatus("unused");
+        resetToken.setUser(user);
 
         resetPasswordTokenRepository.save(resetToken);
 
@@ -283,11 +281,4 @@ public class UserService {
     }
 
 }
-  /*ResetPasswordToken resetToken = resetPasswordTokenRepository
-                .findByTokenAndStatusAndExpirationDateAfter(hashToken, "unused", Instant.now())
-                .orElseThrow(() -> new AppException(ErrorCode.TOKEN_NOT_EXISTED));
 
-        User user = resetToken.getUser();// lấy bản ghi user
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        // Đánh dấu token là đã sử dụng
-        resetToken.setStatus("used");*/

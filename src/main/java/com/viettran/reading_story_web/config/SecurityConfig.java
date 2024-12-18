@@ -45,17 +45,16 @@ public class SecurityConfig {
             "/auth/login", "/auth/introspect", "/auth/refresh", "/auth/logout",
             "/email/send",
             "/error-reporter",
-            "/users/register",
+            "/users/register","/users/forgot-password",
             "/avatar-frame",
             "/stories",
     };
     private final String[] PATCH_METHOD_PUBLIC_ENDPOINTS = {
             "/stories/{storyId}/chapters/{chapterId}/increase-view",
             "/stories/{storyId}/rate",
+            "/users/reset-password"
     };
 
-    private final String[] PUT_METHOD_PUBLIC_ENDPOINTS = {
-    };
 
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
@@ -68,7 +67,6 @@ public class SecurityConfig {
                         request.requestMatchers(HttpMethod.POST ,POST_METHOD_PUBLIC_ENDPOINTS).permitAll()
                                 .requestMatchers(HttpMethod.GET, GET_METHOD_PUBLIC_ENDPOINTS).permitAll()
                                 .requestMatchers(HttpMethod.PATCH, PATCH_METHOD_PUBLIC_ENDPOINTS).permitAll()
-                                .requestMatchers(HttpMethod.PUT, PUT_METHOD_PUBLIC_ENDPOINTS).permitAll()
                                 .anyRequest()
                                 .authenticated())
 

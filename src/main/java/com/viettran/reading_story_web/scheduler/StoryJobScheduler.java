@@ -33,7 +33,7 @@ public class StoryJobScheduler {
                 StringRedisConnection stringRedisConn = (StringRedisConnection) connection;
                 for (Story story : stories) {
                     String key = "story::" + story.getId();
-                    stringRedisConn.set(key, String.valueOf(story.getViewCount()));
+                    stringRedisConn.set(key, "0");
                 }
             } else {
                 throw new IllegalStateException("Connection is not a StringRedisConnection");

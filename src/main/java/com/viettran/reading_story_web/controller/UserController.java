@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.viettran.reading_story_web.dto.request.*;
 import com.viettran.reading_story_web.dto.response.ApiResponse;
+import com.viettran.reading_story_web.dto.response.EmailResponse;
 import com.viettran.reading_story_web.dto.response.FollowResponse;
 import com.viettran.reading_story_web.dto.response.UserResponse;
 import com.viettran.reading_story_web.service.UserService;
@@ -69,15 +70,21 @@ public class UserController {
     }
 
     @PostMapping("/forgot-password")
-    ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request){
-        userService.forgotPassword(request);
+    ApiResponse<EmailResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
 
-        return ApiResponse.<String>builder()
-                .result("Password reset link has sent into your email")
+        return ApiResponse.<EmailResponse>builder()
+                .result(userService.forgotPassword(request))
                 .build();
     }
 
-  //?token
+    @PatchMapping("/reset-password")
+    ApiResponse<String> resetPassword(@Valid @RequestBody ChangePasswordRequest request){
+        userService.resetPassword(request);
+        return ApiResponse.<String>builder()
+                .result("Your password has change!")
+                .build();
+    }
+
     @PatchMapping("/change-password")
     ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request){
         userService.changePassword(request);
@@ -91,16 +98,6 @@ public class UserController {
             throws IOException {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.uploadAvatar(userId, request))
-                .build();
-    }
-
-    //verify account with otp
-    @PutMapping("/verify-account")
-    ApiResponse<String> verifyOTP(@RequestBody VerifyOTPRequest request) {
-        userService.verifyOTP(request);
-
-        return ApiResponse.<String>builder()
-                .result("Your account have been verified")
                 .build();
     }
 

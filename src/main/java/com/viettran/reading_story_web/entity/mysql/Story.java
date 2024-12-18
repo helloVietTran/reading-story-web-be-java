@@ -45,6 +45,9 @@ public class Story extends BaseEntity {
     int viewCount = 0;
 
     @Builder.Default
+    int totalRatingPoint = 0;
+
+    @Builder.Default
     double rate = 0;
 
     @Builder.Default

@@ -1,10 +1,9 @@
 package com.viettran.reading_story_web.controller;
 
-import com.viettran.reading_story_web.dto.request.RatingRequest;
 import com.viettran.reading_story_web.dto.response.*;
 import com.viettran.reading_story_web.dto.request.StoryRequest;
 import com.viettran.reading_story_web.enums.Gender;
-import com.viettran.reading_story_web.enums.StoryStatus;
+
 import com.viettran.reading_story_web.service.StoryService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -76,12 +75,12 @@ public class StoryController {
 
     @PatchMapping("/{storyId}/rate")
     ApiResponse<StoryResponse> rateStory(
-            @PathVariable Integer storyId,
-            @RequestBody RatingRequest request)
+            @PathVariable int storyId,
+            @RequestParam int point
+    )
     {
-
         return ApiResponse.<StoryResponse>builder()
-                .result(storyService.rateStory(storyId , request))
+                .result(storyService.rateStory(storyId , point))
                 .build();
     }
 
