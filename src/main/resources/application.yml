@@ -4,7 +4,7 @@ server:
     context-path: /api
 
 spring:
-  datasource
+  datasource:
     url: jdbc:mysql://root:trmAKIhIVbVtfRdiMGkTaKYOsriztgui@yamanote.proxy.rlwy.net:35566/railway
     driverClassName: com.mysql.cj.jdbc.Driver
     username: ${MYSQLUSER:root}
