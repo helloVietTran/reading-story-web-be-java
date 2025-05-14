@@ -1,10 +1,11 @@
 package com.viettran.reading_story_web.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
+
 import com.viettran.reading_story_web.dto.request.AvatarFrameRequest;
 import com.viettran.reading_story_web.dto.response.AvatarFrameResponse;
 import com.viettran.reading_story_web.entity.mysql.AvatarFrame;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface AvatarFrameMapper {
@@ -12,6 +13,5 @@ public interface AvatarFrameMapper {
 
     AvatarFrameResponse toAvatarFrameResponse(AvatarFrame avatarFrame);
 
-    void updateAvatarFrame(@MappingTarget AvatarFrame avatarFrame , AvatarFrameRequest request);
+    void updateAvatarFrame(@MappingTarget AvatarFrame avatarFrame, AvatarFrameRequest request);
 }
-

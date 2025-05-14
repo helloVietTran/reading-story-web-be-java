@@ -1,13 +1,11 @@
 package com.viettran.reading_story_web.dto.response;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.viettran.reading_story_web.entity.mysql.Comment;
-import com.viettran.reading_story_web.entity.mysql.ErrorReporter;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.Instant;
-import java.util.List;
 
 @Data
 @NoArgsConstructor

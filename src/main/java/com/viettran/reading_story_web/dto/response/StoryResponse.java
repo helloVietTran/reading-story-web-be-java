@@ -1,12 +1,13 @@
 package com.viettran.reading_story_web.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.viettran.reading_story_web.enums.Gender;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.viettran.reading_story_web.enums.Gender;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor

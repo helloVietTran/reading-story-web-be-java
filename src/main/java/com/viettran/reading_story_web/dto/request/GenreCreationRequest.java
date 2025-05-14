@@ -1,6 +1,7 @@
 package com.viettran.reading_story_web.dto.request;
 
 import jakarta.validation.constraints.NotNull;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,6 +13,7 @@ import lombok.experimental.FieldDefaults;
 public class GenreCreationRequest {
     @NotNull(message = "SOME_FIELDS_IS_REQUIRED")
     String name;
+
     String description;
 
     Integer queryCode;

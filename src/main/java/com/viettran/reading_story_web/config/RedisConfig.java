@@ -10,7 +10,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableRedisRepositories(basePackages = "com.viettran.reading_story_web.repository")
+@EnableRedisRepositories(basePackages = "com.viettran.reading_story_web.repository.redis")
 public class RedisConfig {
 
     @Bean

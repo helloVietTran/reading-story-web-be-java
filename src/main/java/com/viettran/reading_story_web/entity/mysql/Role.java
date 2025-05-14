@@ -23,9 +23,8 @@ public class Role {
 
     @ManyToMany
     @JoinTable(
-        name = "role_permission",
-        joinColumns = @JoinColumn(name = "role_name"),
-        inverseJoinColumns = @JoinColumn(name = "role_permission_name")
-    )
+            name = "role_permission",
+            joinColumns = @JoinColumn(name = "role_name"),
+            inverseJoinColumns = @JoinColumn(name = "role_permission_name"))
     Set<Permission> permissions;
 }

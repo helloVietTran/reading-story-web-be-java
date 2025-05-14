@@ -1,15 +1,14 @@
 package com.viettran.reading_story_web.entity.mysql;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.time.Instant;
+
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.Instant;
-import java.util.List;
 
 @Getter
 @Setter
@@ -47,5 +46,4 @@ public class ErrorReporter {
     public void onCreate() {
         createdAt = Instant.now();
     }
-
 }

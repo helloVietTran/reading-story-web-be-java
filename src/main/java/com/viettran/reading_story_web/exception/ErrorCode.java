@@ -1,8 +1,9 @@
 package com.viettran.reading_story_web.exception;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+
+import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
@@ -16,15 +17,15 @@ public enum ErrorCode {
     RATING_POINT_INVALID(1005, "Rating point must be between 1 and 5 point", HttpStatus.BAD_REQUEST),
     USERNAME_IS_REQUIRED(1006, "User name is required", HttpStatus.BAD_REQUEST),
 
-    BOUGHT_AVATAR_FRAME(1021,"You have bought avatar frame", HttpStatus.BAD_REQUEST ),
+    BOUGHT_AVATAR_FRAME(1021, "You have bought avatar frame", HttpStatus.BAD_REQUEST),
     NOT_ENOUGH_TIME_REQUIRED(1007, "Please wait a few minutes before requesting a new token", HttpStatus.BAD_REQUEST),
-    ALREADY_ATTENDED_TODAY(1041, "You have attended today",HttpStatus.BAD_REQUEST),
+    ALREADY_ATTENDED_TODAY(1041, "You have attended today", HttpStatus.BAD_REQUEST),
 
     USER_EXISTED(1010, "User existed", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1011, "User not existed", HttpStatus.NOT_FOUND),
     AVATAR_FRAME_NOT_EXISTED(1020, "Avatar frame not existed", HttpStatus.BAD_REQUEST),
     GENRE_NOT_EXISTED(1030, "Genre not existed", HttpStatus.NOT_FOUND),
-    POINT_NOT_EXISTED(1040,"Point record not existed", HttpStatus.NOT_FOUND ),
+    POINT_NOT_EXISTED(1040, "Point record not existed", HttpStatus.NOT_FOUND),
     STORY_NOT_EXISTED(1050, "Story not existed", HttpStatus.NOT_FOUND),
     CHAPTER_NOT_EXISTED(1060, "Chapter not existed", HttpStatus.NOT_FOUND),
     LEVEL_NOT_EXISTED(1070, "Level record not existed", HttpStatus.NOT_FOUND),

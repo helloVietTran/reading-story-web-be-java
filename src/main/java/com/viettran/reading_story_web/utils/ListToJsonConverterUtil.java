@@ -1,14 +1,14 @@
 package com.viettran.reading_story_web.utils;
 
+import java.io.IOException;
+import java.util.List;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
-
-import java.io.IOException;
-import java.util.List;
 
 @Converter
 public class ListToJsonConverterUtil implements AttributeConverter<List<String>, String> {

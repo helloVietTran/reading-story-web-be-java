@@ -1,8 +1,14 @@
 package com.viettran.reading_story_web.service;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
+import org.springframework.stereotype.Service;
+
 import com.viettran.reading_story_web.dto.request.BuyItemsRequest;
-import com.viettran.reading_story_web.dto.response.PointResponse;
 import com.viettran.reading_story_web.dto.response.InventoryResponse;
+import com.viettran.reading_story_web.dto.response.PointResponse;
 import com.viettran.reading_story_web.entity.mysql.*;
 import com.viettran.reading_story_web.enums.PointHistoryType;
 import com.viettran.reading_story_web.exception.AppException;
@@ -12,15 +18,11 @@ import com.viettran.reading_story_web.mapper.PointMapper;
 import com.viettran.reading_story_web.mapper.UserMapper;
 import com.viettran.reading_story_web.repository.*;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
 
 @Slf4j
 @Service
@@ -37,13 +39,12 @@ public class PointService {
     AvatarFrameMapper avatarFrameMapper;
     UserMapper userMapper;
 
-    AuthenticationService  authenticationService;
+    AuthenticationService authenticationService;
     DateTimeFormatUtil dateTimeFormatUtil;
 
     public Point createPoint(String userId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         Point newPoint = Point.builder()
                 .user(user)
@@ -58,8 +59,8 @@ public class PointService {
     public void attendance() {
         String userId = authenticationService.getCurrentUserId();
 
-        Point point = pointRepository.findByUserId(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.POINT_NOT_EXISTED));
+        Point point =
+                pointRepository.findByUserId(userId).orElseThrow(() -> new AppException(ErrorCode.POINT_NOT_EXISTED));
 
         Instant now = Instant.now();
         LocalDate today = now.atZone(ZoneId.systemDefault()).toLocalDate();
@@ -101,33 +102,32 @@ public class PointService {
         pointHistoryRepository.save(pointHistory);
     }
 
-
-    public PointResponse getPoint(){
+    public PointResponse getPoint() {
         String userId = authenticationService.getCurrentUserId();
 
-        Point point = pointRepository.findByUserId(userId)
-                .orElseGet(() -> createPoint(userId));;
+        Point point = pointRepository.findByUserId(userId).orElseGet(() -> createPoint(userId));
+        ;
 
-        return  pointMapper.toPointResponse(point);
-
+        return pointMapper.toPointResponse(point);
     }
 
+    public InventoryResponse buyItem(BuyItemsRequest request) {
+        User user = userRepository
+                .findById(request.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-    public InventoryResponse buyItem(BuyItemsRequest request){
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Point point = pointRepository
+                .findByUserId(request.getUserId())
+                .orElseThrow(() -> new AppException(ErrorCode.POINT_NOT_EXISTED));
 
-        Point point = pointRepository.findByUserId(request.getUserId())
-                .orElseThrow(()-> new AppException(ErrorCode.POINT_NOT_EXISTED));
-
-        AvatarFrame avatarFrame = avatarFrameRepository.findById(request.getItemId())
-                .orElseThrow(()-> new AppException(ErrorCode.AVATAR_FRAME_NOT_EXISTED));
+        AvatarFrame avatarFrame = avatarFrameRepository
+                .findById(request.getItemId())
+                .orElseThrow(() -> new AppException(ErrorCode.AVATAR_FRAME_NOT_EXISTED));
         // kiểm tra đã mua khung chưa
-        if(inventoryRepository.existsByUserIdAndExpirationDateAfter(request.getUserId(), Instant.now()))
+        if (inventoryRepository.existsByUserIdAndExpirationDateAfter(request.getUserId(), Instant.now()))
             throw new AppException(ErrorCode.BOUGHT_AVATAR_FRAME);
 
-        if (point.getTotal() < avatarFrame.getPrice())
-            throw  new AppException(ErrorCode.NOT_ENOUGH_POINT);
+        if (point.getTotal() < avatarFrame.getPrice()) throw new AppException(ErrorCode.NOT_ENOUGH_POINT);
         point.setTotal(point.getTotal() - avatarFrame.getPrice());
 
         Inventory inventory = new Inventory(user, avatarFrame, 86400);
@@ -153,5 +153,4 @@ public class PointService {
                 .expirationDate(dateTimeFormatUtil.format(inventory.getExpirationDate()))
                 .build();
     }
-
 }

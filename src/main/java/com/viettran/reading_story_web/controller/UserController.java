@@ -1,8 +1,11 @@
 package com.viettran.reading_story_web.controller;
 
-
 import java.io.IOException;
 import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
 
 import com.viettran.reading_story_web.dto.request.*;
 import com.viettran.reading_story_web.dto.response.ApiResponse;
@@ -10,14 +13,11 @@ import com.viettran.reading_story_web.dto.response.EmailResponse;
 import com.viettran.reading_story_web.dto.response.FollowResponse;
 import com.viettran.reading_story_web.dto.response.UserResponse;
 import com.viettran.reading_story_web.service.UserService;
-import jakarta.validation.Valid;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/users")
@@ -70,7 +70,7 @@ public class UserController {
     }
 
     @PostMapping("/forgot-password")
-    ApiResponse<EmailResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
+    ApiResponse<EmailResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 
         return ApiResponse.<EmailResponse>builder()
                 .result(userService.forgotPassword(request))
@@ -78,23 +78,19 @@ public class UserController {
     }
 
     @PatchMapping("/reset-password")
-    ApiResponse<String> resetPassword(@Valid @RequestBody ChangePasswordRequest request){
+    ApiResponse<String> resetPassword(@Valid @RequestBody ChangePasswordRequest request) {
         userService.resetPassword(request);
-        return ApiResponse.<String>builder()
-                .result("Your password has change!")
-                .build();
+        return ApiResponse.<String>builder().result("Your password has change!").build();
     }
 
     @PatchMapping("/change-password")
-    ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request){
+    ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         userService.changePassword(request);
-        return ApiResponse.<String>builder()
-                .result("Password has change")
-                .build();
+        return ApiResponse.<String>builder().result("Password has change").build();
     }
 
     @PatchMapping("/{userId}/upload-avatar")
-    ApiResponse<UserResponse> uploadAvatar(@PathVariable String userId,@ModelAttribute UploadAvatarRequest request)
+    ApiResponse<UserResponse> uploadAvatar(@PathVariable String userId, @ModelAttribute UploadAvatarRequest request)
             throws IOException {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.uploadAvatar(userId, request))
@@ -103,7 +99,7 @@ public class UserController {
 
     // follow truyện
     @PostMapping("/follow")
-    ApiResponse<FollowResponse> followStory(@RequestBody FollowRequest request){
+    ApiResponse<FollowResponse> followStory(@RequestBody FollowRequest request) {
         return ApiResponse.<FollowResponse>builder()
                 .result(userService.followStory(request))
                 .build();
@@ -111,9 +107,7 @@ public class UserController {
 
     // unfollow truyện
     @DeleteMapping("/unfollow/{storyId}/{followId}")
-    ApiResponse<String> unfollowStory(
-            @PathVariable Integer storyId,
-            @PathVariable String followId){
+    ApiResponse<String> unfollowStory(@PathVariable Integer storyId, @PathVariable String followId) {
         userService.unfollowStory(storyId, followId);
 
         return ApiResponse.<String>builder()
@@ -121,11 +115,10 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/top-user")
-    ApiResponse<List<UserResponse>> getTop10User(){
+    @GetMapping("/top-users")
+    ApiResponse<List<UserResponse>> getTop10Users() {
         return ApiResponse.<List<UserResponse>>builder()
-                .result(userService.getTop10UserByChaptersRead())
+                .result(userService.getTop10UsersByChaptersRead())
                 .build();
     }
 }
-

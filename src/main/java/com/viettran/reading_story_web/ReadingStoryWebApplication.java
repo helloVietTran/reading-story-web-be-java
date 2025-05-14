@@ -10,8 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class ReadingStoryWebApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ReadingStoryWebApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(ReadingStoryWebApplication.class, args);
+    }
 }

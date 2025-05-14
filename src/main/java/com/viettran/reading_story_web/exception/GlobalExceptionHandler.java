@@ -1,10 +1,12 @@
 package com.viettran.reading_story_web.exception;
 
-import com.viettran.reading_story_web.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.viettran.reading_story_web.dto.response.ApiResponse;
+
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
@@ -33,12 +35,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handlingValidation(MethodArgumentNotValidException exception) {
         if (exception.getFieldError() == null) {
-            return ResponseEntity.badRequest().body(
-                    ApiResponse.builder()
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.builder()
                             .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
                             .result("Uncategorized exception")
-                            .build()
-            );
+                            .build());
         }
         String enumKey = exception.getFieldError().getDefaultMessage();
         ErrorCode errorCode = ErrorCode.valueOf(enumKey);

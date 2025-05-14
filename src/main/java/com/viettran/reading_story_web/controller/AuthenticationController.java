@@ -2,17 +2,17 @@ package com.viettran.reading_story_web.controller;
 
 import java.text.ParseException;
 
-import com.viettran.reading_story_web.dto.response.ApiResponse;
+import org.springframework.web.bind.annotation.*;
+
+import com.nimbusds.jose.JOSEException;
 import com.viettran.reading_story_web.dto.request.AuthenticationRequest;
 import com.viettran.reading_story_web.dto.request.IntrospectRequest;
 import com.viettran.reading_story_web.dto.request.LogoutRequest;
 import com.viettran.reading_story_web.dto.request.RefreshRequest;
+import com.viettran.reading_story_web.dto.response.ApiResponse;
 import com.viettran.reading_story_web.dto.response.AuthenticationResponse;
 import com.viettran.reading_story_web.dto.response.IntrospectResponse;
 import com.viettran.reading_story_web.service.AuthenticationService;
-import org.springframework.web.bind.annotation.*;
-
-import com.nimbusds.jose.JOSEException;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -50,22 +50,4 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
     }
-
-
-   /* @PostMapping("/send-verify-account-link")
-    ApiResponse<String> sendLinkVerifyAccount(@RequestBody SendLinkVerifyAccountRequest request) {
-        authenticationService.sendLinkVerifyAccount(request);
-        return ApiResponse.<String>builder()
-                .result("Verify account link has send")
-                .build();
-
-    }
-
-    @PostMapping("/verify-account-link")
-    ApiResponse<UserResponse> verifyAccountLink(@RequestBody VerifyAccountLinkRequest request) {
-        return ApiResponse.<UserResponse>builder()
-                .result(authenticationService.verifyAccountLink(request))
-                .build();
-    }*/
-
 }

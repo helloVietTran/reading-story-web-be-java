@@ -1,6 +1,5 @@
 package com.viettran.reading_story_web.dto.request;
 
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,4 +12,3 @@ public class AuthenticationRequest {
     String email;
     String password;
 }
-

@@ -1,11 +1,11 @@
 package com.viettran.reading_story_web.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.viettran.reading_story_web.dto.request.RoleRequest;
 import com.viettran.reading_story_web.dto.response.RoleResponse;
 import com.viettran.reading_story_web.entity.mysql.Role;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
@@ -14,4 +14,3 @@ public interface RoleMapper {
 
     RoleResponse toRoleResponse(Role role);
 }
-

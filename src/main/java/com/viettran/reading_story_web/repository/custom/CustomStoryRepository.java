@@ -1,17 +1,18 @@
 package com.viettran.reading_story_web.repository.custom;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.*;
+
+import org.springframework.stereotype.Repository;
 
 import com.viettran.reading_story_web.entity.mysql.Genre;
 import com.viettran.reading_story_web.entity.mysql.Story;
 import com.viettran.reading_story_web.enums.Gender;
 import com.viettran.reading_story_web.enums.StoryStatus;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.*;
-import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class CustomStoryRepository {
@@ -21,39 +22,25 @@ public class CustomStoryRepository {
 
     public List<Story> findStories(Integer genreCode, Integer status, Integer sort, String keyword) {
         return findStoriesAdvanced(
-                genreCode != null ? List.of(genreCode) : null,
-                null,
-                status,
-                sort,
-                null,
-                null,
-                keyword
-        );
+                genreCode != null ? List.of(genreCode) : null, null, status, sort, null, null, keyword);
     }
 
-    public List<Story> findStoriesAdvanced(List<Integer> genreCodes,
-                                           List<Integer> notGenreCodes,
-                                           Integer status,
-                                           Integer sort,
-                                           Integer minChapter,
-                                           Integer gender,
-                                           String keyword) {
+    public List<Story> findStoriesAdvanced(
+            List<Integer> genreCodes,
+            List<Integer> notGenreCodes,
+            Integer status,
+            Integer sort,
+            Integer minChapter,
+            Integer gender,
+            String keyword) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Story> query = cb.createQuery(Story.class);
         Root<Story> root = query.from(Story.class);
         Join<Story, Genre> genreJoin = root.join("genres", JoinType.LEFT);
 
-        List<Predicate> predicates = buildPredicates(cb,
-                query,
-                root,
-                genreJoin,
-                genreCodes,
-                notGenreCodes,
-                status,
-                minChapter,
-                gender,
-                keyword);
+        List<Predicate> predicates = buildPredicates(
+                cb, query, root, genreJoin, genreCodes, notGenreCodes, status, minChapter, gender, keyword);
 
         query.select(root).where(predicates.toArray(new Predicate[0]));
         applySorting(cb, query, root, sort);
@@ -61,17 +48,17 @@ public class CustomStoryRepository {
         return entityManager.createQuery(query).getResultList();
     }
 
-    private List<Predicate> buildPredicates(CriteriaBuilder cb,
-                                            CriteriaQuery<?> query,
-                                            Root<Story> root,
-                                            Join<Story, Genre> genreJoin,
-                                            List<Integer> genreCodes,
-                                            List<Integer> notGenreCodes,
-                                            Integer status,
-                                            Integer minChapter,
-                                            Integer gender,
-                                            String keyword
-    ) {
+    private List<Predicate> buildPredicates(
+            CriteriaBuilder cb,
+            CriteriaQuery<?> query,
+            Root<Story> root,
+            Join<Story, Genre> genreJoin,
+            List<Integer> genreCodes,
+            List<Integer> notGenreCodes,
+            Integer status,
+            Integer minChapter,
+            Integer gender,
+            String keyword) {
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -97,7 +84,11 @@ public class CustomStoryRepository {
 
         // Lọc theo gender
         if (gender != null && gender != -1) {
-            predicates.add(cb.equal(root.get("gender"), gender == 2 ? Gender.MALE : Gender.FEMALE));
+            if (gender == 2) {
+                predicates.add(cb.notEqual(root.get("gender"), Gender.FEMALE)); // tìm không là male
+            } else if (gender == 1) {
+                predicates.add(cb.notEqual(root.get("gender"), Gender.MALE));
+            }
         }
 
         // Lọc theo số chapter
@@ -130,4 +121,3 @@ public class CustomStoryRepository {
         }
     }
 }
-

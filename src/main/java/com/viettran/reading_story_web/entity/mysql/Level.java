@@ -1,8 +1,10 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.viettran.reading_story_web.enums.UserRank;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,7 +23,7 @@ public class Level {
 
     @Column(nullable = false)
     @Builder.Default
-    String rankName = UserRank.RANK_1.getRankName();// luyện khí kì
+    String rankName = UserRank.RANK_1.getRankName();
 
     @Column(nullable = false)
     @Builder.Default
@@ -29,46 +31,55 @@ public class Level {
 
     @Column(nullable = false)
     @Builder.Default
-    float process = 0.0f;
+    float process = 0.0f; // progress toward next rank
 
+    @Column(nullable = false)
     @Builder.Default
     int chaptersRead = 0;
 
-    int nextLevelChaptersRequired;
+    @Builder.Default
+    int nextLevelChaptersRequired = UserRank.RANK_2.getChaptersRequired();
 
     // relationship
     @JsonBackReference
     @OneToOne
     User user;
 
-    // Phương thức tăng chaptersRead và update rank/level
     public void increaseChaptersRead(int additionalChapters) {
         this.chaptersRead += additionalChapters;
 
-        // Tính số chương cần để lên rank tiếp theo
         UserRank currentRank = UserRank.getRankByChaptersRead(this.chaptersRead);
-        this.nextLevelChaptersRequired = calculateNextLevelChapters(currentRank);
+        UserRank nextRank = getNextRank(currentRank);
 
-        // Tăng level nếu đủ điều kiện
-        this.process =  (float) (this.chaptersRead + additionalChapters)/this.nextLevelChaptersRequired;
-        while (this.process >= 1) {
-            this.level++;
-            this.process = 0.0f; // Reset tiến độ
-            this.rankName =  UserRank.getRankByChaptersRead(this.chaptersRead).getRankName();
-        }
-    }
+        this.level = currentRank.getLevel();
+        this.rankName = currentRank.getRankName();
 
-    // Tính số chương cần để lên rank tiếp theo dựa vào chaptersRequired của rank tiếp theo
-    private int calculateNextLevelChapters(UserRank currentRank) {
-        UserRank[] ranks = UserRank.values();
-        for (int i = 0; i < ranks.length - 1; i++) {
-            if (ranks[i] == currentRank) {
-                return ranks[i + 1].getChaptersRequired() - this.chaptersRead;
+        if (nextRank != null) {
+            int currentThreshold = currentRank.getChaptersRequired();
+            int nextThreshold = nextRank.getChaptersRequired();
+
+            this.process = (float) (this.chaptersRead - currentThreshold) / (nextThreshold - currentThreshold);
+
+            if (this.chaptersRead >= nextThreshold) {
+                this.level = nextRank.getLevel();
+                this.rankName = nextRank.getRankName();
+                this.process = 0.0f;
             }
+
+            this.nextLevelChaptersRequired = nextThreshold;
+        } else {
+            // Already at highest rank
+            this.process = 1.0f;
+            this.nextLevelChaptersRequired = Integer.MAX_VALUE;
         }
-        // Nếu đã đạt rank cuối, không cần chương thêm
-        return Integer.MAX_VALUE;
     }
 
-
+    private UserRank getNextRank(UserRank rank) {
+        UserRank[] ranks = UserRank.values();
+        int index = rank.ordinal();
+        if (index < ranks.length - 1) {
+            return ranks[index + 1];
+        }
+        return null;
+    }
 }

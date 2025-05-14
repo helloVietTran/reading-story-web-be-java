@@ -1,18 +1,17 @@
 package com.viettran.reading_story_web.entity.mysql;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.viettran.reading_story_web.entity.base.BaseEntity;
-import com.viettran.reading_story_web.enums.Gender;
-import jakarta.persistence.*;
-
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.viettran.reading_story_web.entity.base.BaseEntity;
+import com.viettran.reading_story_web.enums.Gender;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -74,8 +73,7 @@ public class User extends BaseEntity {
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_name")
-    )
+            inverseJoinColumns = @JoinColumn(name = "role_name"))
     Set<Role> roles;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -88,4 +86,3 @@ public class User extends BaseEntity {
     @OneToMany
     Set<ReadingHistory> readingHistories;
 }
-

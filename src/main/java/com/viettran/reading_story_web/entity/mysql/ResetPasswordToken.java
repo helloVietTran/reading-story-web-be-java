@@ -1,9 +1,11 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.viettran.reading_story_web.entity.base.ExpirationBaseEntity;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -24,7 +26,7 @@ public class ResetPasswordToken extends ExpirationBaseEntity {
     String token;
     String status; // used or unused
 
-    //relationship
+    // relationship
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;

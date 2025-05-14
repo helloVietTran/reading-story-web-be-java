@@ -1,15 +1,15 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.viettran.reading_story_web.entity.base.BaseEntity;
 import com.viettran.reading_story_web.enums.PointHistoryType;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -32,7 +32,7 @@ public class PointHistory extends BaseEntity {
 
     Integer pointFluctuation;
 
-    //relationship
+    // relationship
     @JsonBackReference
     @ManyToOne
     Point point;
