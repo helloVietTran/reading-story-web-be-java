@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PointService {
     PointRepository pointRepository;
-    ReadingHistoryRepository.UserRepository userRepository;
+    UserRepository userRepository;
     PointHistoryRepository pointHistoryRepository;
     AvatarFrameRepository avatarFrameRepository;
     InventoryRepository inventoryRepository;

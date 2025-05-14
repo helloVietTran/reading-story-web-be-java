@@ -35,9 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommentService {
-    ReactionRepository.StoryRepository storyRepository;
+    StoryRepository storyRepository;
     CommentRepository commentRepository;
-    ReadingHistoryRepository.UserRepository userRepository;
+    UserRepository userRepository;
     ChapterRepository chapterRepository;
     InventoryRepository inventoryRepository;
     AuthenticationService authenticationService;

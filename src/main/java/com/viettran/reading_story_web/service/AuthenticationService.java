@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import com.viettran.reading_story_web.repository.jpa.ReadingHistoryRepository;
+import com.viettran.reading_story_web.repository.jpa.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
-    ReadingHistoryRepository.UserRepository userRepository;
+    UserRepository userRepository;
     DisabledTokenRepository disabledTokenRepository;
 
     PasswordEncoder passwordEncoder;

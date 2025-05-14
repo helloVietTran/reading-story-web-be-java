@@ -3,7 +3,7 @@ package com.viettran.reading_story_web.service;
 import java.util.HashSet;
 import java.util.List;
 
-import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
+import com.viettran.reading_story_web.repository.jpa.RoleRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +20,11 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService {
-    ReactionRepository.RoleRepository roleRepository;
+    RoleRepository roleRepository;
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public RoleResponse create(RoleRequest request) {
         var role = roleMapper.toRole(request);
 

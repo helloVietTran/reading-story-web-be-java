@@ -3,6 +3,7 @@ package com.viettran.reading_story_web.service;
 import java.util.Optional;
 
 import com.viettran.reading_story_web.repository.jpa.ReadingHistoryRepository;
+import com.viettran.reading_story_web.repository.jpa.UserRepository;
 import org.springframework.stereotype.Service;
 
 import com.viettran.reading_story_web.dto.response.ReactionResponse;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReactionService {
     ReactionRepository reactionRepository;
     CommentRepository commentRepository;
-    ReadingHistoryRepository.UserRepository userRepository;
+    UserRepository userRepository;
 
     AuthenticationService authenticationService;
 

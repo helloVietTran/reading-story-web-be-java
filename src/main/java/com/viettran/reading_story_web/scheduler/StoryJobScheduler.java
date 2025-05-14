@@ -3,7 +3,7 @@ package com.viettran.reading_story_web.scheduler;
 import java.util.List;
 import java.util.Set;
 
-import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
+import com.viettran.reading_story_web.repository.jpa.StoryRepository;
 import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StoryJobScheduler {
-    ReactionRepository.StoryRepository storyRepository;
+    StoryRepository storyRepository;
     StringRedisTemplate stringRedisTemplate;
 
     @Scheduled(cron = "0 */5 * * * ?")

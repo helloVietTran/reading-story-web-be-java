@@ -3,8 +3,7 @@ package com.viettran.reading_story_web.config;
 import java.time.Instant;
 import java.util.HashSet;
 
-import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
-import com.viettran.reading_story_web.repository.jpa.ReadingHistoryRepository;
+import com.viettran.reading_story_web.repository.jpa.RoleRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,7 @@ import com.viettran.reading_story_web.entity.mysql.Level;
 import com.viettran.reading_story_web.entity.mysql.Role;
 import com.viettran.reading_story_web.entity.mysql.User;
 import com.viettran.reading_story_web.repository.jpa.LevelRepository;
+import com.viettran.reading_story_web.repository.jpa.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ApplicationInitConfig {
 
     @Bean
     ApplicationRunner applicationRunner(
-            ReadingHistoryRepository.UserRepository userRepository, ReactionRepository.RoleRepository roleRepository, LevelRepository levelRepository) {
+            UserRepository userRepository, RoleRepository roleRepository, LevelRepository levelRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByEmail(ADMIN_EMAIL).isEmpty()) {

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
-import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
+import com.viettran.reading_story_web.repository.jpa.StoryRepository;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +46,7 @@ public class ChapterService {
     StringRedisTemplate stringRedisTemplate;
 
     ChapterRepository chapterRepository;
-    ReactionRepository.StoryRepository storyRepository;
+    StoryRepository storyRepository;
     ImageRepository imageRepository;
 
     ImageMapper imageMapper;

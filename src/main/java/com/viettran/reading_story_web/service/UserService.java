@@ -35,9 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
-    ReadingHistoryRepository.UserRepository userRepository;
-    ReactionRepository.RoleRepository roleRepository;
-    ReactionRepository.StoryRepository storyRepository;
+    UserRepository userRepository;
+    RoleRepository roleRepository;
+    StoryRepository storyRepository;
     FollowRepository followRepository;
     ResetPasswordTokenRepository resetPasswordTokenRepository;
     LevelRepository levelRepository;
