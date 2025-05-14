@@ -1,6 +1,5 @@
 package com.viettran.reading_story_web.dto.request;
 
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,4 +17,3 @@ public class SendEmailRequest {
     String subject;
     String htmlContent;
 }
-

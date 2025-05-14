@@ -1,19 +1,21 @@
 package com.viettran.reading_story_web.controller;
 
-import com.viettran.reading_story_web.dto.response.*;
-import com.viettran.reading_story_web.dto.request.StoryRequest;
-import com.viettran.reading_story_web.enums.Gender;
+import java.io.IOException;
+import java.util.List;
 
-import com.viettran.reading_story_web.service.StoryService;
 import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
+import com.viettran.reading_story_web.dto.request.StoryRequest;
+import com.viettran.reading_story_web.dto.response.*;
+import com.viettran.reading_story_web.enums.Gender;
+import com.viettran.reading_story_web.service.StoryService;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -33,30 +35,27 @@ public class StoryController {
     @GetMapping
     ApiResponse<PageResponse<StoryResponse>> getStories(
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "32") int size
-    ) {
+            @RequestParam(value = "size", required = false, defaultValue = "32") int size) {
         return ApiResponse.<PageResponse<StoryResponse>>builder()
                 .result(storyService.getStories(page, size))
                 .build();
     }
 
     @GetMapping("/{storyId}")
-    ApiResponse<StoryResponse> getStoryById(@PathVariable Integer storyId){
+    ApiResponse<StoryResponse> getStoryById(@PathVariable Integer storyId) {
         return ApiResponse.<StoryResponse>builder()
                 .result(storyService.getStoryById(storyId))
                 .build();
     }
 
     @DeleteMapping("/{storyId}")
-    ApiResponse<String> deleteStory(@PathVariable Integer storyId){
+    ApiResponse<String> deleteStory(@PathVariable Integer storyId) {
         storyService.deleteStory(storyId);
-        return ApiResponse.<String>builder()
-                .result("Story has been deleted")
-                .build();
+        return ApiResponse.<String>builder().result("Story has been deleted").build();
     }
 
     @PutMapping("{storyId}")
-    ApiResponse<StoryResponse> updateStory(@ModelAttribute StoryRequest request,@PathVariable Integer storyId){
+    ApiResponse<StoryResponse> updateStory(@ModelAttribute StoryRequest request, @PathVariable Integer storyId) {
         return ApiResponse.<StoryResponse>builder()
                 .result(storyService.updateStory(request, storyId))
                 .build();
@@ -66,21 +65,16 @@ public class StoryController {
     ApiResponse<PageResponse<StoryResponse>> searchStories(
             @RequestParam String keyword,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "10") int size
-    ) {
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         return ApiResponse.<PageResponse<StoryResponse>>builder()
                 .result(storyService.searchStories(keyword, page, size))
                 .build();
     }
 
     @PatchMapping("/{storyId}/rate")
-    ApiResponse<StoryResponse> rateStory(
-            @PathVariable int storyId,
-            @RequestParam int point
-    )
-    {
+    ApiResponse<StoryResponse> rateStory(@PathVariable int storyId, @RequestParam int point) {
         return ApiResponse.<StoryResponse>builder()
-                .result(storyService.rateStory(storyId , point))
+                .result(storyService.rateStory(storyId, point))
                 .build();
     }
 
@@ -89,22 +83,21 @@ public class StoryController {
             @RequestParam(required = false) Integer genreCode,
             @RequestParam(defaultValue = "-1") Integer status,
             @RequestParam(defaultValue = "1") Integer sort,
-            @RequestParam(required = false) String keyword
-    ) {
+            @RequestParam(required = false) String keyword) {
         return ApiResponse.<List<StoryResponse>>builder()
                 .result(storyService.filterStory(genreCode, status, sort, keyword))
                 .build();
     }
 
     @GetMapping("/top-views")
-    ApiResponse<List<StoryResponse>> getTop10StoriesByViewCount(){
+    ApiResponse<List<StoryResponse>> getTop10StoriesByViewCount() {
         return ApiResponse.<List<StoryResponse>>builder()
                 .result(storyService.getTop10StoriesByViewCount())
                 .build();
     }
     // bảng follow
-    @GetMapping("/my-followed-story")
-    ApiResponse<List<FollowResponse>> getFollowedStories(){
+    @GetMapping("/my-followed-stories")
+    ApiResponse<List<FollowResponse>> getFollowedStories() {
         return ApiResponse.<List<FollowResponse>>builder()
                 .result(storyService.getFollowedStories())
                 .build();
@@ -115,8 +108,7 @@ public class StoryController {
     ApiResponse<PageResponse<StoryResponse>> getStoriesByGender(
             @RequestParam Gender gender,
             @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "32") int size
-    ){
+            @RequestParam(required = false, defaultValue = "32") int size) {
         return ApiResponse.<PageResponse<StoryResponse>>builder()
                 .result(storyService.getStoriesByGender(page, size, gender))
                 .build();
@@ -125,22 +117,18 @@ public class StoryController {
     @GetMapping("/hot")
     ApiResponse<PageResponse<StoryResponse>> getHotStories(
             @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false, defaultValue = "32") int size
-    ){
+            @RequestParam(required = false, defaultValue = "32") int size) {
         return ApiResponse.<PageResponse<StoryResponse>>builder()
                 .result(storyService.getHotStories(page, size))
                 .build();
     }
 
     @GetMapping("/my-followed-story/{storyId}")
-    ApiResponse<FollowResponse> getFollowedStoryByUserIdAndStoryId(
-            @PathVariable Integer storyId
-    ){
+    ApiResponse<FollowResponse> getFollowedStoryByUserIdAndStoryId(@PathVariable Integer storyId) {
         return ApiResponse.<FollowResponse>builder()
                 .result(storyService.getFollowedStoryByUserIdAndStoryId(storyId))
                 .build();
     }
-
 
     @GetMapping("/find-advanced")
     ApiResponse<List<StoryResponse>> filterAdvanced(
@@ -149,17 +137,10 @@ public class StoryController {
             @RequestParam(defaultValue = "-1") Integer status,
             @RequestParam(defaultValue = "1") Integer sort,
             @RequestParam(required = false, defaultValue = "0") Integer minChapter,
-            @RequestParam(required = false, defaultValue = "-1") Integer gender
+            @RequestParam(required = false, defaultValue = "-1") Integer gender) {
 
-    ) {
         return ApiResponse.<List<StoryResponse>>builder()
-                .result(storyService.filterAdvanced(genreCodes,
-                        notGenreCodes,
-                        status,
-                        sort,
-                        minChapter,
-                        gender)
-                )
+                .result(storyService.filterAdvanced(genreCodes, notGenreCodes, status, sort, minChapter, gender))
                 .build();
     }
 

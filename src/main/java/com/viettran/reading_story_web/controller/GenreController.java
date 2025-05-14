@@ -1,18 +1,21 @@
 package com.viettran.reading_story_web.controller;
 
-import com.viettran.reading_story_web.dto.response.ApiResponse;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.viettran.reading_story_web.dto.request.GenreCreationRequest;
 import com.viettran.reading_story_web.dto.request.GenreUpdationRequest;
+import com.viettran.reading_story_web.dto.response.ApiResponse;
 import com.viettran.reading_story_web.dto.response.GenreResponse;
 import com.viettran.reading_story_web.service.GenreService;
-import jakarta.validation.Valid;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/genres")
@@ -38,12 +41,9 @@ public class GenreController {
 
     @PostMapping("/list")
     public ApiResponse<List<GenreResponse>> createListGenres(@RequestBody List<GenreCreationRequest> requests) {
-        List<GenreResponse> responses = requests.stream()
-                .map(genreService::createGenre)
-                .collect(Collectors.toList());
-        return ApiResponse.<List<GenreResponse>>builder()
-                .result(responses)
-                .build();
+        List<GenreResponse> responses =
+                requests.stream().map(genreService::createGenre).collect(Collectors.toList());
+        return ApiResponse.<List<GenreResponse>>builder().result(responses).build();
     }
 
     @PutMapping("/{id}")
@@ -56,9 +56,6 @@ public class GenreController {
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteGenre(@PathVariable Integer id) {
         genreService.deleteGenre(id);
-        return ApiResponse.<String>builder()
-                .result("Genre has been deleted")
-                .build();
+        return ApiResponse.<String>builder().result("Genre has been deleted").build();
     }
-
 }

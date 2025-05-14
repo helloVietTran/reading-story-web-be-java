@@ -1,5 +1,9 @@
 package com.viettran.reading_story_web.service;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.viettran.reading_story_web.dto.response.ReactionResponse;
 import com.viettran.reading_story_web.entity.mysql.Comment;
 import com.viettran.reading_story_web.entity.mysql.Reaction;
@@ -10,15 +14,11 @@ import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.repository.CommentRepository;
 import com.viettran.reading_story_web.repository.ReactionRepository;
 import com.viettran.reading_story_web.repository.UserRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +29,13 @@ public class ReactionService {
     CommentRepository commentRepository;
     UserRepository userRepository;
 
-    SimpMessagingTemplate messagingTemplate;
-
     AuthenticationService authenticationService;
 
     public ReactionResponse toggleLike(String commentId) {
         String userId = authenticationService.getCurrentUserId();
-        Optional<Reaction> existingReaction = reactionRepository
-                .findByCommentIdAndUserId(commentId, userId);
-        Comment comment = commentRepository.findById(commentId)
+        Optional<Reaction> existingReaction = reactionRepository.findByCommentIdAndUserId(commentId, userId);
+        Comment comment = commentRepository
+                .findById(commentId)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_EXISTED));
 
         if (existingReaction.isPresent()) {
@@ -57,8 +55,7 @@ public class ReactionService {
             }
         } else {
             // Nếu chưa có reaction -> thêm like
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
             Reaction newReaction = Reaction.builder()
                     .reactionType(ReactionType.LIKE)
@@ -71,12 +68,7 @@ public class ReactionService {
         }
         commentRepository.save(comment);
 
-        // Gửi thông báo qua WebSocket
-        messagingTemplate.convertAndSend("/topic/comments/" + commentId + "/likes", comment.getLikeCount());
-
-        return ReactionResponse.builder()
-                .count(comment.getLikeCount())
-                .build();
+        return ReactionResponse.builder().count(comment.getLikeCount()).build();
     }
 
     public ReactionResponse toggleDislike(String commentId) {
@@ -84,7 +76,8 @@ public class ReactionService {
 
         Optional<Reaction> existingReaction = reactionRepository.findByCommentIdAndUserId(commentId, userId);
 
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository
+                .findById(commentId)
                 .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_EXISTED));
 
         if (existingReaction.isPresent()) {
@@ -106,8 +99,7 @@ public class ReactionService {
 
         } else {
             // Nếu chưa có reaction -> thêm dislike
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
             Reaction newReaction = Reaction.builder()
                     .reactionType(ReactionType.DISLIKE)
@@ -122,12 +114,6 @@ public class ReactionService {
 
         commentRepository.save(comment);
 
-        // Gửi thông báo qua WebSocket
-        messagingTemplate.convertAndSend("/topic/comments/" + commentId + "/dislikes", comment.getDislikeCount());
-
-        return ReactionResponse.builder()
-                .count(comment.getDislikeCount())
-                .build();
+        return ReactionResponse.builder().count(comment.getDislikeCount()).build();
     }
-
 }

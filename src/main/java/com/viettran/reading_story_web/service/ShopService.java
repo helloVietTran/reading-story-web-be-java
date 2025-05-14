@@ -1,5 +1,12 @@
 package com.viettran.reading_story_web.service;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import com.viettran.reading_story_web.dto.request.AvatarFrameRequest;
 import com.viettran.reading_story_web.dto.response.AvatarFrameResponse;
 import com.viettran.reading_story_web.entity.mysql.AvatarFrame;
@@ -7,17 +14,12 @@ import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.AvatarFrameMapper;
 import com.viettran.reading_story_web.repository.AvatarFrameRepository;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,9 @@ public class ShopService {
     protected String AVATAR_FRAME_FOLDER;
 
     public List<AvatarFrameResponse> getAllAvatarFrames() {
-        return avatarFrameRepository.findAll().stream().map(avatarFrameMapper::toAvatarFrameResponse).toList();
+        return avatarFrameRepository.findAll().stream()
+                .map(avatarFrameMapper::toAvatarFrameResponse)
+                .toList();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -48,8 +52,9 @@ public class ShopService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public AvatarFrameResponse updateAvatarFrame(Integer id , AvatarFrameRequest request){
-        AvatarFrame avatarFrame = avatarFrameRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.GENRE_NOT_EXISTED));
+    public AvatarFrameResponse updateAvatarFrame(Integer id, AvatarFrameRequest request) {
+        AvatarFrame avatarFrame =
+                avatarFrameRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.GENRE_NOT_EXISTED));
 
         avatarFrameMapper.updateAvatarFrame(avatarFrame, request);
 
@@ -57,7 +62,7 @@ public class ShopService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteAvatarFrame(Integer id){
+    public void deleteAvatarFrame(Integer id) {
         avatarFrameRepository.deleteById(id);
     }
 }

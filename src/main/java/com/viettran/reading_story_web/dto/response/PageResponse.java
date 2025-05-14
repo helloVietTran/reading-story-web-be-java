@@ -1,13 +1,14 @@
 package com.viettran.reading_story_web.dto.response;
 
+import java.util.Collections;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import java.util.List;
-import java.util.Collections;
 
 @Data
 @Builder
@@ -21,5 +22,5 @@ public class PageResponse<T> {
     long totalElements;
 
     @Builder.Default
-    List<T> data =  Collections.emptyList();
+    List<T> data = Collections.emptyList();
 }

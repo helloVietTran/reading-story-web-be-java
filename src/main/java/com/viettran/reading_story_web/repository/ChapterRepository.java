@@ -1,7 +1,10 @@
 package com.viettran.reading_story_web.repository;
 
-import com.viettran.reading_story_web.entity.mysql.Chapter;
+import java.util.List;
+import java.util.Optional;
+
 import jakarta.transaction.Transactional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.viettran.reading_story_web.entity.mysql.Chapter;
 
 @Repository
 public interface ChapterRepository extends JpaRepository<Chapter, String> {
@@ -19,6 +21,7 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
     List<Chapter> findTop3ChaptersByStoryId(@Param("storyId") Integer storyId);
 
     List<Chapter> findByStoryIdOrderByChapAsc(Integer storyId);
+
     Page<Chapter> findAllByStoryId(Integer storyId, Pageable pageable);
 
     Optional<Chapter> findByStoryIdAndChap(Integer storyId, Integer chap);
@@ -31,5 +34,4 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
     // tính tổng lượt view
     @Query("SELECT SUM(c.viewCount) FROM Chapter c WHERE c.story.id = :storyId")
     int getTotalViewsByStoryId(@Param("storyId") Integer storyId);
-
 }

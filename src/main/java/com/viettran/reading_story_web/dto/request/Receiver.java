@@ -3,7 +3,6 @@ package com.viettran.reading_story_web.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,4 +12,3 @@ public class Receiver {
     String name;
     String email;
 }
-

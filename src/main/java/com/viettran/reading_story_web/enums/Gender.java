@@ -13,5 +13,4 @@ public enum Gender {
     Gender(String label) {
         this.label = label;
     }
-
 }

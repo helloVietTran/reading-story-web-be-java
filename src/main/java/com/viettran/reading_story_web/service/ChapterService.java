@@ -1,5 +1,19 @@
 package com.viettran.reading_story_web.service;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.util.*;
+
+import jakarta.transaction.Transactional;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import com.viettran.reading_story_web.dto.request.ChapterRequest;
 import com.viettran.reading_story_web.dto.response.ChapterResponse;
 import com.viettran.reading_story_web.dto.response.ImageResponse;
@@ -17,24 +31,12 @@ import com.viettran.reading_story_web.repository.ImageRepository;
 import com.viettran.reading_story_web.repository.StoryRepository;
 import com.viettran.reading_story_web.scheduler.ChapterJobScheduler;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
-import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.time.Instant;
-import java.util.*;
 
 @Slf4j
 @Service
@@ -65,8 +67,8 @@ public class ChapterService {
     public ChapterResponse createChapter(Integer storyId, ChapterRequest request) throws IOException {
         Chapter chapter = chapterMapper.toChapter(request);
 
-        Story story = storyRepository.findById(storyId)
-                .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
+        Story story =
+                storyRepository.findById(storyId).orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
         story.setNewestChapter(story.getNewestChapter() + 1);
         story.setUpdatedAt(Instant.now());
 
@@ -75,11 +77,11 @@ public class ChapterService {
         chapter.setCreatedAt(Instant.now());
         chapter.setUpdatedAt(Instant.now());
 
-        List<Map<String, String>> uploadedList = fileService.uploadFiles(request.getFiles(), CHAPTER_FOLDER );
+        List<Map<String, String>> uploadedList = fileService.uploadFiles(request.getFiles(), CHAPTER_FOLDER);
         List<Image> imageList = new ArrayList<>();
 
         // add image
-        for(Map<String, String> uploadedImage: uploadedList){
+        for (Map<String, String> uploadedImage : uploadedList) {
             Image image = Image.builder()
                     .fileName(uploadedImage.get("fileName"))
                     .fileUrl(uploadedImage.get("fileUrl"))
@@ -99,26 +101,27 @@ public class ChapterService {
         return chapterResponse;
     }
 
-    public List<ChapterResponse> getAllChapters(Integer storyId){
+    public List<ChapterResponse> getAllChapters(Integer storyId) {
         List<Chapter> chapterList = chapterRepository.findByStoryIdOrderByChapAsc(storyId);
         // không cần lấy trả về ảnh
         return chapterList.stream().map(chapterMapper::toChapterResponse).toList();
     }
 
-    public PageResponse<ChapterResponse> getChapters(Integer storyId, int page, int size){
+    public PageResponse<ChapterResponse> getChapters(Integer storyId, int page, int size) {
         Sort sort = Sort.by("createdAt").descending();
 
         Pageable pageable = PageRequest.of(page - 1, size, sort);
 
         var pageData = chapterRepository.findAllByStoryId(storyId, pageable);
 
-        List<ChapterResponse> chapterResponseList = pageData.getContent().stream().map(chapter-> {
-
-           ChapterResponse chapterResponse =  chapterMapper.toChapterResponse(chapter);
-           chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
-           chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
-           return  chapterResponse;
-        }).toList();
+        List<ChapterResponse> chapterResponseList = pageData.getContent().stream()
+                .map(chapter -> {
+                    ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
+                    chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
+                    chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
+                    return chapterResponse;
+                })
+                .toList();
 
         return PageResponse.<ChapterResponse>builder()
                 .currentPage(page)
@@ -129,9 +132,10 @@ public class ChapterService {
                 .build();
     }
 
-    public ChapterResponse getChapter(String chapterId){
-        Chapter chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(()-> new AppException(ErrorCode.CHAPTER_NOT_EXISTED));
+    public ChapterResponse getChapter(String chapterId) {
+        Chapter chapter = chapterRepository
+                .findById(chapterId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_EXISTED));
         ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
         chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
         chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
@@ -140,22 +144,23 @@ public class ChapterService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteChapter(String chapterId){
+    public void deleteChapter(String chapterId) {
         chapterRepository.deleteById(chapterId);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public ChapterResponse updateChapter(String chapterId, ChapterRequest request) throws IOException{
-        Chapter chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(()-> new AppException(ErrorCode.CHAPTER_NOT_EXISTED));
+    public ChapterResponse updateChapter(String chapterId, ChapterRequest request) throws IOException {
+        Chapter chapter = chapterRepository
+                .findById(chapterId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_EXISTED));
 
         chapter.setUpdatedAt(Instant.now());
         chapterMapper.updateChapter(chapter, request);
 
-        List<Map<String, String>> uploadedList = fileService.uploadFiles(request.getFiles(), CHAPTER_FOLDER );
+        List<Map<String, String>> uploadedList = fileService.uploadFiles(request.getFiles(), CHAPTER_FOLDER);
         List<Image> imageList = new ArrayList<>();
 
-        for(Map<String, String> uploadedImage: uploadedList){
+        for (Map<String, String> uploadedImage : uploadedList) {
             Image image = Image.builder()
                     .fileName(uploadedImage.get("fileName"))
                     .fileUrl(uploadedImage.get("fileUrl"))
@@ -167,32 +172,31 @@ public class ChapterService {
         chapterRepository.save(chapter);
 
         ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
-        chapterResponse.setComments(
-                chapter.getComments().stream().map(commentMapper::toCommentResponse
-                ).toList());
+        chapterResponse.setComments(chapter.getComments().stream()
+                .map(commentMapper::toCommentResponse)
+                .toList());
         chapterResponse.setImgSrcs(chapter.getImages());
 
         return chapterResponse;
     }
 
-    public ChapterResponse getChapterByChap(int storyId, int chap){
-        Optional<Chapter> chapterOptional =  chapterRepository.findByStoryIdAndChap(storyId, chap);
+    public ChapterResponse getChapterByChap(int storyId, int chap) {
+        Optional<Chapter> chapterOptional = chapterRepository.findByStoryIdAndChap(storyId, chap);
 
-        if(chapterOptional.isEmpty())
-            throw new AppException(ErrorCode.CHAPTER_NOT_EXISTED);
+        if (chapterOptional.isEmpty()) throw new AppException(ErrorCode.CHAPTER_NOT_EXISTED);
         Chapter chapter = chapterOptional.get();
 
         ChapterResponse chapterResponse = chapterMapper.toChapterResponse(chapter);
-       /* chapterResponse.setComments(
-                chapter.getComments().stream().map(commentMapper::toCommentResponse
-                ).toList()); */
+        /* chapterResponse.setComments(
+        chapter.getComments().stream().map(commentMapper::toCommentResponse
+        ).toList()); */
         chapterResponse.setUpdatedAt(dateTimeFormatUtil.format(chapter.getUpdatedAt()));
         chapterResponse.setCreatedAt(dateTimeFormatUtil.format(chapter.getCreatedAt()));
 
         return chapterResponse;
     }
 
-    public PageResponse<ImageResponse> getChapterResource(String chapterId, int page, int size){
+    public PageResponse<ImageResponse> getChapterResource(String chapterId, int page, int size) {
         Sort sort = Sort.by("createdAt").ascending();
 
         Pageable pageable = PageRequest.of(page - 1, size, sort);
@@ -204,24 +208,17 @@ public class ChapterService {
                 .pageSize(pageData.getSize())
                 .totalElements(pageData.getTotalElements())
                 .totalPages(pageData.getTotalPages())
-                .data(pageData.getContent().stream().map(imageMapper::toImageResponse).toList())
+                .data(pageData.getContent().stream()
+                        .map(imageMapper::toImageResponse)
+                        .toList())
                 .build();
-
     }
 
-    public void increaseView(Integer storyId ,String chapterId){
+    public void increaseView(Integer storyId, String chapterId) {
         String storyKey = "story::" + storyId;
         String chapterKey = "chapter::" + chapterId;
 
         stringRedisTemplate.opsForValue().increment(chapterKey, 1);
-        stringRedisTemplate
-                .opsForValue().increment(storyKey, 1);
+        stringRedisTemplate.opsForValue().increment(storyKey, 1);
     }
-
-    @PostConstruct
-    public void cacheChapterViewCountInitially() {
-        chapterJobScheduler.syncDataFromRedisToMySQL();
-        chapterJobScheduler.cacheChapterViewCountInRedis();
-    }
-
 }

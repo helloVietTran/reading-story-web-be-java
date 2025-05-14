@@ -1,13 +1,16 @@
 package com.viettran.reading_story_web.dto.request;
 
-import com.viettran.reading_story_web.enums.Gender;
-import com.viettran.reading_story_web.enums.StoryStatus;
+import java.util.Set;
+
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Set;
+import com.viettran.reading_story_web.enums.Gender;
+import com.viettran.reading_story_web.enums.StoryStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor
@@ -29,6 +32,6 @@ public class StoryRequest {
 
     Gender gender;
 
-    //id genre
+    // id genre
     Set<Integer> genreIds;
 }

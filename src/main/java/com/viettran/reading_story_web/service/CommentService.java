@@ -1,5 +1,16 @@
 package com.viettran.reading_story_web.service;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import com.viettran.reading_story_web.dto.request.CommentRequest;
 import com.viettran.reading_story_web.dto.request.CommentUpdationRequest;
 import com.viettran.reading_story_web.dto.response.CommentResponse;
@@ -11,26 +22,13 @@ import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.CommentMapper;
 import com.viettran.reading_story_web.mapper.LevelMapper;
-import com.viettran.reading_story_web.mapper.StoryMapper;
-import com.viettran.reading_story_web.mapper.UserMapper;
 import com.viettran.reading_story_web.repository.*;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -47,23 +45,19 @@ public class CommentService {
     DateTimeFormatUtil dateTimeFormatUtil;
 
     CommentMapper commentMapper;
-    StoryMapper storyMapper;
-    UserMapper userMapper;
     LevelMapper levelMapper;
 
-    SimpMessagingTemplate messagingTemplate;
+    public CommentResponse createComment(CommentRequest request) {
+        String userId = authenticationService.getCurrentUserId();
+        Story story = storyRepository
+                .findById(request.getStoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.STORY_NOT_EXISTED));
 
-    public CommentResponse createComment(CommentRequest request){
-        String userId =  authenticationService.getCurrentUserId();
-        Story story = storyRepository.findById(request.getStoryId())
-                .orElseThrow(()-> new AppException(ErrorCode.STORY_NOT_EXISTED));
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         Chapter chapter = chapterRepository
-                .findByStoryIdAndChap( request.getStoryId(),request.getAtChapter())
-                .orElseThrow(()-> new AppException((ErrorCode.CHAPTER_NOT_EXISTED)));
+                .findByStoryIdAndChap(request.getStoryId(), request.getAtChapter())
+                .orElseThrow(() -> new AppException((ErrorCode.CHAPTER_NOT_EXISTED)));
 
         Comment comment = commentMapper.toComment(request);
         comment.setStory(story);
@@ -80,15 +74,14 @@ public class CommentService {
         CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
         commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
         commentResponse.setUpdatedAt(dateTimeFormatUtil.format(comment.getUpdatedAt()));
-        
+
         return commentResponse;
     }
 
     @PreAuthorize("#id == authentication.name")
-    public CommentResponse updateComment(CommentUpdationRequest request, String commentId, String id){
+    public CommentResponse updateComment(CommentUpdationRequest request, String commentId, String id) {
         Optional<Comment> commentOptional = commentRepository.findByIdAndUserId(commentId, id);
-        if(commentOptional.isEmpty())
-            throw new AppException(ErrorCode.COMMENT_NOT_EXISTED);
+        if (commentOptional.isEmpty()) throw new AppException(ErrorCode.COMMENT_NOT_EXISTED);
 
         commentMapper.updateComment(commentOptional.get(), request);
 
@@ -96,7 +89,7 @@ public class CommentService {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    public void deleteComment(String commentId){
+    public void deleteComment(String commentId) {
         commentRepository.deleteById(commentId);
     }
 
@@ -106,46 +99,42 @@ public class CommentService {
 
         var pageData = commentRepository.findByStoryIdAndParentCommentIdIsNull(storyId, pageable);
 
-        List<CommentResponse> commentResponseList = pageData.getContent()
-                .stream()
+        List<CommentResponse> commentResponseList = pageData.getContent().stream()
                 .map(this::buildCommentResponseWithReplies)
                 .toList();
 
         return buildPageResponse(page, pageData, commentResponseList);
     }
 
-
-    public PageResponse<CommentResponse> getNewComments(){
+    public PageResponse<CommentResponse> getNewComments() {
         Sort sort = Sort.by("createdAt").descending();
         Pageable pageable = PageRequest.of(0, 10, sort);
 
         var pageData = commentRepository.findAll(pageable);
 
-        List<CommentResponse> commentResponses = pageData.getContent().stream().map(comment->{
-            CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
-            commentResponse.setStory(
-                    StoryResponse.builder()
+        List<CommentResponse> commentResponses = pageData.getContent().stream()
+                .map(comment -> {
+                    CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
+                    commentResponse.setStory(StoryResponse.builder()
                             .name(comment.getStory().getName())
                             .id(comment.getStory().getId())
                             .newestChapter(comment.getStory().getNewestChapter())
                             .viewCount(comment.getStory().getViewCount())
                             .imgSrc(comment.getStory().getImgSrc())
                             .slug(comment.getStory().getSlug())
-                            .build()
-            );
+                            .build());
 
-            commentResponse.setUser(
-                    UserResponse.builder()
+                    commentResponse.setUser(UserResponse.builder()
                             .id(comment.getUser().getId())
                             .name(comment.getUser().getName())
                             .imgSrc(comment.getUser().getImgSrc())
-                            .build()
-            );
+                            .build());
 
-            commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
-            commentResponse.setUpdatedAt(dateTimeFormatUtil.format(comment.getUpdatedAt()));
-            return commentResponse;
-        }).toList();
+                    commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
+                    commentResponse.setUpdatedAt(dateTimeFormatUtil.format(comment.getUpdatedAt()));
+                    return commentResponse;
+                })
+                .toList();
 
         return PageResponse.<CommentResponse>builder()
                 .currentPage(0)
@@ -154,8 +143,8 @@ public class CommentService {
                 .totalPages(pageData.getTotalPages())
                 .data(commentResponses)
                 .build();
-
     }
+
     public PageResponse<CommentResponse> getCommentsByChapterId(String chapterId, int page, int size) {
         Sort sort = Sort.by("createdAt").descending();
         Pageable pageable = PageRequest.of(page - 1, size, sort);
@@ -164,15 +153,14 @@ public class CommentService {
         var pageData = commentRepository.findByChapterIdAndParentCommentIdIsNull(chapterId, pageable);
 
         // Chuyển đổi dữ liệu sang CommentResponse và xử lý replies
-        List<CommentResponse> commentResponseList = pageData.getContent()
-                .stream()
+        List<CommentResponse> commentResponseList = pageData.getContent().stream()
                 .map(this::buildCommentResponseWithReplies)
                 .toList();
 
         return buildPageResponse(page, pageData, commentResponseList);
     }
 
-    public PageResponse<CommentResponse> getMyComment(){
+    public PageResponse<CommentResponse> getMyComment() {
         String userId = authenticationService.getCurrentUserId();
 
         Sort sort = Sort.by("createdAt").descending();
@@ -184,18 +172,18 @@ public class CommentService {
                 .pageSize(pageData.getSize())
                 .totalElements(pageData.getTotalElements())
                 .totalPages(pageData.getTotalPages())
-                .data(pageData.getContent().stream().map(comment->{
-                    CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
-                    commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
-                    commentResponse.setStory(
-                            StoryResponse.builder()
+                .data(pageData.getContent().stream()
+                        .map(comment -> {
+                            CommentResponse commentResponse = commentMapper.toCommentResponse(comment);
+                            commentResponse.setCreatedAt(dateTimeFormatUtil.format(comment.getCreatedAt()));
+                            commentResponse.setStory(StoryResponse.builder()
                                     .imgSrc(comment.getStory().getImgSrc())
                                     .name(comment.getStory().getName())
-                                    .build()
-                    );
+                                    .build());
 
-                    return commentResponse;
-                }).toList())
+                            return commentResponse;
+                        })
+                        .toList())
                 .build();
     }
 
@@ -205,9 +193,8 @@ public class CommentService {
 
         // Nếu có replies, thì map sang CommentResponse
         if (!replies.isEmpty()) {
-            List<CommentResponse> replyResponses = replies.stream()
-                    .map(this::buildCommentResponse)
-                    .toList();
+            List<CommentResponse> replyResponses =
+                    replies.stream().map(this::buildCommentResponse).toList();
             response.setReplies(replyResponses);
         }
 
@@ -237,7 +224,8 @@ public class CommentService {
         return response;
     }
 
-    private PageResponse<CommentResponse> buildPageResponse(int page, Page<Comment> pageData, List<CommentResponse> content) {
+    private PageResponse<CommentResponse> buildPageResponse(
+            int page, Page<Comment> pageData, List<CommentResponse> content) {
         return PageResponse.<CommentResponse>builder()
                 .currentPage(page)
                 .pageSize(pageData.getSize())
@@ -247,4 +235,29 @@ public class CommentService {
                 .build();
     }
 
+    public PageResponse<CommentResponse> getCommentsByUserId(String userId, int page, int size) {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pageable = PageRequest.of(page - 1, size, sort);
+
+        var pageData = commentRepository.findAllByUserId(pageable, userId);
+
+        List<CommentResponse> commentResponses = pageData.getContent().stream()
+                .map(comment -> {
+                    CommentResponse commentResponse = buildCommentResponse(comment);
+
+                    commentResponse.setStory(StoryResponse.builder()
+                            .name(comment.getStory().getName())
+                            .id(comment.getStory().getId())
+                            .newestChapter(comment.getStory().getNewestChapter())
+                            .viewCount(comment.getStory().getViewCount())
+                            .imgSrc(comment.getStory().getImgSrc())
+                            .slug(comment.getStory().getSlug())
+                            .build());
+
+                    return commentResponse;
+                })
+                .toList();
+
+        return buildPageResponse(page, pageData, commentResponses);
+    }
 }

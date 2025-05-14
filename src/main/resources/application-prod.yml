@@ -38,5 +38,3 @@ app:
   admin-email: ${ADMIN_EMAIL:numberzero0909@gmail.com}
   frontend:
     url: ${FRONTEND_URL:http://localhost:5173}
-
-    # to do: tạo network và thêm biến môi trường

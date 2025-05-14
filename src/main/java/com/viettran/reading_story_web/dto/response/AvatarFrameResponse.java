@@ -1,9 +1,9 @@
 package com.viettran.reading_story_web.dto.response;
 
+import java.time.Duration;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.Duration;
 
 @Data
 @NoArgsConstructor

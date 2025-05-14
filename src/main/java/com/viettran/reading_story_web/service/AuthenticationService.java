@@ -1,6 +1,5 @@
 package com.viettran.reading_story_web.service;
 
-
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -8,18 +7,6 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import com.viettran.reading_story_web.dto.request.AuthenticationRequest;
-import com.viettran.reading_story_web.dto.request.IntrospectRequest;
-import com.viettran.reading_story_web.dto.request.LogoutRequest;
-import com.viettran.reading_story_web.dto.request.RefreshRequest;
-import com.viettran.reading_story_web.dto.response.AuthenticationResponse;
-import com.viettran.reading_story_web.dto.response.IntrospectResponse;
-import com.viettran.reading_story_web.entity.mysql.DisabledToken;
-import com.viettran.reading_story_web.entity.mysql.User;
-import com.viettran.reading_story_web.exception.AppException;
-import com.viettran.reading_story_web.exception.ErrorCode;
-import com.viettran.reading_story_web.repository.DisabledTokenRepository;
-import com.viettran.reading_story_web.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +25,18 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.viettran.reading_story_web.dto.request.AuthenticationRequest;
+import com.viettran.reading_story_web.dto.request.IntrospectRequest;
+import com.viettran.reading_story_web.dto.request.LogoutRequest;
+import com.viettran.reading_story_web.dto.request.RefreshRequest;
+import com.viettran.reading_story_web.dto.response.AuthenticationResponse;
+import com.viettran.reading_story_web.dto.response.IntrospectResponse;
+import com.viettran.reading_story_web.entity.mysql.DisabledToken;
+import com.viettran.reading_story_web.entity.mysql.User;
+import com.viettran.reading_story_web.exception.AppException;
+import com.viettran.reading_story_web.exception.ErrorCode;
+import com.viettran.reading_story_web.repository.DisabledTokenRepository;
+import com.viettran.reading_story_web.repository.UserRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +66,6 @@ public class AuthenticationService {
     @Value("${app.jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
 
-
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getAccessToken();
 
@@ -89,8 +87,7 @@ public class AuthenticationService {
 
         boolean isAuthenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
-        if (!isAuthenticated)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!isAuthenticated) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         var accessToken = generateToken(user, false);
         var refreshToken = generateToken(user, true);
@@ -109,7 +106,8 @@ public class AuthenticationService {
             String jid = signAccessToken.getJWTClaimsSet().getJWTID();
             Date expiryTime = signAccessToken.getJWTClaimsSet().getExpirationTime();
 
-            DisabledToken disabledToken = DisabledToken.builder().id(jid).expiryTime(expiryTime).build();
+            DisabledToken disabledToken =
+                    DisabledToken.builder().id(jid).expiryTime(expiryTime).build();
 
             disabledTokenRepository.save(disabledToken);
         } catch (AppException exception) {
@@ -174,25 +172,49 @@ public class AuthenticationService {
         return jwt.getSubject();
     }
 
-    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException {
-        JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
+    private SignedJWT verifyToken(String token, boolean isRefresh) {
+        try {
+            // Khởi tạo verifier với secret key
+            JWSVerifier verifier = new MACVerifier(SECRET_KEY.getBytes());
 
-        SignedJWT signedJWT = SignedJWT.parse(token);
+            // Parse token thành SignedJWT
+            SignedJWT signedJWT = SignedJWT.parse(token);
 
-        Date expiryTime = (isRefresh)
-                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
-                : signedJWT.getJWTClaimsSet().getExpirationTime();
+            // Tính toán thời gian hết hạn
+            Date expiryTime = (isRefresh)
+                    ? new Date(signedJWT
+                            .getJWTClaimsSet()
+                            .getIssueTime()
+                            .toInstant()
+                            .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
+                            .toEpochMilli())
+                    : signedJWT.getJWTClaimsSet().getExpirationTime();
 
-        var isVerified = signedJWT.verify(verifier);
+            // Kiểm tra chữ ký của token
+            boolean isVerified = signedJWT.verify(verifier);
 
-        if (!(isVerified && expiryTime.after(new Date())))
+            // Kiểm tra xem token có hết hạn không và chữ ký có hợp lệ không
+            if (!(isVerified && expiryTime.after(new Date()))) {
+                throw new AppException(ErrorCode.UNAUTHENTICATED);
+            }
+
+            // Kiểm tra nếu token đã bị vô hiệu hóa
+            if (disabledTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
+                throw new AppException(ErrorCode.UNAUTHENTICATED);
+            }
+
+            // Trả về signedJWT nếu không có lỗi
+            return signedJWT;
+
+        } catch (JOSEException | ParseException e) {
+            // Xử lý khi có lỗi trong việc parse hoặc verify token
+            log.error("Token verification failed", e);
+            throw new AppException(ErrorCode.INVALID_TOKEN);
+        } catch (Exception e) {
+            // Bắt các lỗi bất kỳ khác
+            log.error("Unexpected error during token verification", e);
             throw new AppException(ErrorCode.UNAUTHENTICATED);
-
-        if (disabledTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-
-        return signedJWT;
+        }
     }
 
     private String buildScope(User user) {
@@ -207,8 +229,4 @@ public class AuthenticationService {
 
         return stringJoiner.toString();
     }
-
-
-
-
 }

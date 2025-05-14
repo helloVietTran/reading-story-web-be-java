@@ -1,12 +1,12 @@
 package com.viettran.reading_story_web.entity.base;
 
+import java.time.Instant;
+
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Instant;
 
 @Setter
 @Getter
@@ -17,7 +17,7 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void onCreate() {
-        if(createdAt == null) createdAt = Instant.now();
-        if(updatedAt == null) updatedAt= Instant.now();
+        if (createdAt == null) createdAt = Instant.now();
+        if (updatedAt == null) updatedAt = Instant.now();
     }
 }

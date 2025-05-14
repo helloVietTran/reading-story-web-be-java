@@ -1,11 +1,9 @@
 package com.viettran.reading_story_web.entity.mysql;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
-
 
 @Getter
 @Setter
@@ -27,5 +25,4 @@ public class Genre {
 
     @Column(unique = true, nullable = false)
     Integer queryCode;
-
 }

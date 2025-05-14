@@ -1,13 +1,13 @@
 package com.viettran.reading_story_web.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+
 import com.viettran.reading_story_web.dto.request.CommentRequest;
 import com.viettran.reading_story_web.dto.request.CommentUpdationRequest;
 import com.viettran.reading_story_web.dto.response.CommentResponse;
 import com.viettran.reading_story_web.entity.mysql.Comment;
-import com.viettran.reading_story_web.entity.mysql.ErrorReporter;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CommentMapper {

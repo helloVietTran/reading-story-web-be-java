@@ -4,8 +4,8 @@ import java.time.Instant;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import com.viettran.reading_story_web.enums.Gender;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

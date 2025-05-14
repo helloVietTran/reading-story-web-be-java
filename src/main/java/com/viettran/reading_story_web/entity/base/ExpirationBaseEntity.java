@@ -1,12 +1,13 @@
 package com.viettran.reading_story_web.entity.base;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.Duration;
 import java.time.Instant;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Setter
 @Getter
@@ -19,7 +20,6 @@ public abstract class ExpirationBaseEntity {
     @Column(name = "expiration_date", nullable = false)
     private Instant expirationDate;
 
-
     public ExpirationBaseEntity() {}
 
     public ExpirationBaseEntity(long seconds) {
@@ -27,4 +27,3 @@ public abstract class ExpirationBaseEntity {
         this.expirationDate = createdDate.plus(Duration.ofSeconds(seconds));
     }
 }
-

@@ -1,17 +1,18 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import java.text.Normalizer;
+import java.util.List;
+import java.util.Set;
+
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.viettran.reading_story_web.entity.base.BaseEntity;
 import com.viettran.reading_story_web.enums.Gender;
 import com.viettran.reading_story_web.enums.StoryStatus;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
-import java.util.Set;
-
-import java.text.Normalizer;
 
 @Getter
 @Setter
@@ -71,7 +72,6 @@ public class Story extends BaseEntity {
     @Builder.Default
     boolean hot = false;
 
-
     @Enumerated(EnumType.STRING)
     @Builder.Default
     Gender gender = Gender.BOTH;
@@ -91,8 +91,7 @@ public class Story extends BaseEntity {
     @JoinTable(
             name = "story_genre",
             joinColumns = @JoinColumn(name = "story_id"),
-            inverseJoinColumns = @JoinColumn(name = "genre_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
     Set<Genre> genres;
 
     @OneToMany(mappedBy = "story", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -123,4 +122,3 @@ public class Story extends BaseEntity {
         return slug.toLowerCase();
     }
 }
-

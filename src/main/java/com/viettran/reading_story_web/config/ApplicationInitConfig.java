@@ -3,16 +3,17 @@ package com.viettran.reading_story_web.config;
 import java.time.Instant;
 import java.util.HashSet;
 
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.viettran.reading_story_web.entity.mysql.Level;
 import com.viettran.reading_story_web.entity.mysql.Role;
 import com.viettran.reading_story_web.entity.mysql.User;
 import com.viettran.reading_story_web.repository.LevelRepository;
 import com.viettran.reading_story_web.repository.RoleRepository;
 import com.viettran.reading_story_web.repository.UserRepository;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,20 +32,23 @@ public class ApplicationInitConfig {
     static final String ADMIN_PASSWORD = "adminweb";
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository, LevelRepository levelRepository) {
+    ApplicationRunner applicationRunner(
+            UserRepository userRepository, RoleRepository roleRepository, LevelRepository levelRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByEmail(ADMIN_EMAIL).isEmpty()) {
 
                 var roles = new HashSet<Role>();
 
-                Role adminRole = roleRepository.findById("ADMIN")
+                Role adminRole = roleRepository
+                        .findById("ADMIN")
                         .orElseGet(() -> roleRepository.save(Role.builder()
                                 .name("ADMIN")
                                 .description("Admin role")
                                 .build()));
 
-                Role userRole = roleRepository.findById("USER")
+                Role userRole = roleRepository
+                        .findById("USER")
                         .orElseGet(() -> roleRepository.save(Role.builder()
                                 .name("USER")
                                 .description("User role")
@@ -65,17 +69,12 @@ public class ApplicationInitConfig {
 
                 userRepository.save(user);
 
-                Level level = Level.builder()
-                        .user(user)
-                        .build();
+                Level level = Level.builder().user(user).build();
 
                 levelRepository.save(level);
 
                 log.warn("admin has been created with default password: adminweb, please change it");
             }
-
         };
     }
 }
-
-

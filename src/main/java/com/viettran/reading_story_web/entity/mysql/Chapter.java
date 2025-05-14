@@ -1,17 +1,15 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import java.util.List;
+
+import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.viettran.reading_story_web.entity.base.BaseEntity;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.Instant;
-import java.util.List;
 
 @Getter
 @Setter
@@ -50,10 +48,8 @@ public class Chapter extends BaseEntity {
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Image> images;
 
-   @PrePersist
-   public void onCreate() {
-       slug = "chap-" + this.chap;
-
-   }
+    @PrePersist
+    public void onCreate() {
+        slug = "chap-" + this.chap;
+    }
 }
-

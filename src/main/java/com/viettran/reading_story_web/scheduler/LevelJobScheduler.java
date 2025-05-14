@@ -1,16 +1,18 @@
 package com.viettran.reading_story_web.scheduler;
 
+import java.util.Optional;
+import java.util.Set;
 
-import com.viettran.reading_story_web.entity.mysql.Level;
-import com.viettran.reading_story_web.repository.LevelRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import com.viettran.reading_story_web.entity.mysql.Level;
+import com.viettran.reading_story_web.repository.LevelRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @Service
 @RequiredArgsConstructor
@@ -20,32 +22,35 @@ public class LevelJobScheduler {
     LevelRepository levelRepository;
 
     @Scheduled(cron = "0 0/5 * * * ?")
-    protected void syncChaptersReadDataInRedis(){
+    protected void syncChaptersReadDataInRedis() {
         Set<String> keys = stringRedisTemplate.keys("user::*");
 
         if (keys != null) {
             for (String key : keys) {
-                String chaptersReadStr = (String) stringRedisTemplate.opsForValue().get(key);
+                String chaptersReadStr =
+                        (String) stringRedisTemplate.opsForValue().get(key);
 
                 if (chaptersReadStr != null) {
                     String[] keyParts = key.split("::");
                     if (keyParts.length == 2) {
-                        String chapterId = keyParts[1];
+                        String userId = keyParts[1];
 
-                        updateLevels(chapterId, chaptersReadStr);
+                        updateLevels(userId, chaptersReadStr);
                         stringRedisTemplate.opsForValue().set(key, "0");
                     }
                 }
             }
         }
-
     }
 
-    void updateLevels(String levelId, String chaptersRead) {
+    void updateLevels(String userId, String chaptersRead) {
         int chaptersReadNumber = Integer.parseInt(chaptersRead);
-        Level level = levelRepository.findById(levelId).orElse(null);
+        Optional<Level> levelOptional = levelRepository.findByUserId(userId);
 
-        if (level != null)
+        if (levelOptional.isPresent()) {
+            Level level = levelOptional.get();
             level.increaseChaptersRead(chaptersReadNumber);
+            levelRepository.save(level);
+        }
     }
 }

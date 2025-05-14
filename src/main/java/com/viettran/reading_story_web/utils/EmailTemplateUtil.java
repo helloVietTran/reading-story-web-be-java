@@ -1,6 +1,5 @@
 package com.viettran.reading_story_web.utils;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,15 +17,15 @@ import lombok.experimental.FieldDefaults;
 public class EmailTemplateUtil {
     SpringTemplateEngine springTemplateEngine;
 
-    public String generateContent(String templateName, Map<String, Object> variables){
-        Context context = new Context();// context để lưu các biến
-        context.setVariables(variables);// setVariables nhé
-        return springTemplateEngine.process(templateName, context);//template name và context
+    public String generateContent(String templateName, Map<String, Object> variables) {
+        Context context = new Context(); // context để lưu các biến
+        context.setVariables(variables); // setVariables nhé
+        return springTemplateEngine.process(templateName, context); // template name và context
     }
 
-    public  Map<String, Object> createVariables(Object... keyValuePairs) {
-        //Object... keyValuePairs là phương pháp truyền số lượng tham số không ước lượng
-        //Object để không bị giới hạn kiểu dữ liệu
+    public Map<String, Object> createVariables(Object... keyValuePairs) {
+        // Object... keyValuePairs là phương pháp truyền số lượng tham số không ước lượng
+        // Object để không bị giới hạn kiểu dữ liệu
         if (keyValuePairs.length % 2 != 0) {
             throw new IllegalArgumentException("Key-value pairs should be even in number");
         }
@@ -40,4 +39,3 @@ public class EmailTemplateUtil {
         return variables;
     }
 }
-

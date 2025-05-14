@@ -1,11 +1,12 @@
 package com.viettran.reading_story_web.mapper;
 
-import com.viettran.reading_story_web.dto.request.ChapterRequest;
-import com.viettran.reading_story_web.dto.response.ChapterResponse;
-import com.viettran.reading_story_web.entity.mysql.Chapter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+
+import com.viettran.reading_story_web.dto.request.ChapterRequest;
+import com.viettran.reading_story_web.dto.response.ChapterResponse;
+import com.viettran.reading_story_web.entity.mysql.Chapter;
 
 @Mapper(componentModel = "spring")
 public interface ChapterMapper {

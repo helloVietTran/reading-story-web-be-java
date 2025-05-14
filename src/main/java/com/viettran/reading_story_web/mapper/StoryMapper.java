@@ -1,13 +1,13 @@
 package com.viettran.reading_story_web.mapper;
 
-import com.viettran.reading_story_web.dto.request.StoryRequest;
-import com.viettran.reading_story_web.dto.response.StoryResponse;
-import com.viettran.reading_story_web.entity.redis.StoryCache;
-import com.viettran.reading_story_web.entity.mysql.Story;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.springframework.web.bind.annotation.RequestBody;
+
+import com.viettran.reading_story_web.dto.request.StoryRequest;
+import com.viettran.reading_story_web.dto.response.StoryResponse;
+import com.viettran.reading_story_web.entity.mysql.Story;
+import com.viettran.reading_story_web.entity.redis.StoryCache;
 
 @Mapper(componentModel = "spring")
 public interface StoryMapper {

@@ -1,9 +1,11 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import jakarta.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.viettran.reading_story_web.entity.base.ExpirationBaseEntity;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,7 +23,7 @@ public class Inventory extends ExpirationBaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    //relationship
+    // relationship
     @ManyToOne
     User user;
 

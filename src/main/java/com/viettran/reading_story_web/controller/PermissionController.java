@@ -2,12 +2,12 @@ package com.viettran.reading_story_web.controller;
 
 import java.util.List;
 
-import com.viettran.reading_story_web.dto.response.ApiResponse;
-import com.viettran.reading_story_web.dto.request.PermissionRequest;
-import com.viettran.reading_story_web.dto.response.PermissionResponse;
-import com.viettran.reading_story_web.service.PermissionService;
 import org.springframework.web.bind.annotation.*;
 
+import com.viettran.reading_story_web.dto.request.PermissionRequest;
+import com.viettran.reading_story_web.dto.response.ApiResponse;
+import com.viettran.reading_story_web.dto.response.PermissionResponse;
+import com.viettran.reading_story_web.service.PermissionService;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

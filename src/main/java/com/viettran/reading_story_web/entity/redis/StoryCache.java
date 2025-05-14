@@ -1,10 +1,12 @@
 package com.viettran.reading_story_web.entity.redis;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import java.io.Serializable;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-import java.io.Serializable;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +15,9 @@ import java.io.Serializable;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RedisHash(value = "StoryCache", timeToLive = 3600)
 public class StoryCache implements Serializable {
+    @Id
     int id;
+
     String name;
     String authorName;
     String imgSrc;
@@ -26,3 +30,8 @@ public class StoryCache implements Serializable {
     Long likeCount;
     boolean hot;
 }
+// Key: StoryCache:1
+// Type: Hash
+// Fields:
+//  id            -> "1"
+//  name          -> "Harry Potter"

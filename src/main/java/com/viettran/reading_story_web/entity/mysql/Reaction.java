@@ -1,9 +1,10 @@
 package com.viettran.reading_story_web.entity.mysql;
 
+import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.viettran.reading_story_web.enums.ReactionType;
-import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,9 +1,9 @@
 package com.viettran.reading_story_web.repository;
 
-import com.viettran.reading_story_web.entity.mysql.ErrorReporter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.viettran.reading_story_web.entity.mysql.ErrorReporter;
+
 @Repository
-public interface ErrorReporterRepository extends JpaRepository<ErrorReporter, Integer> {
-}
+public interface ErrorReporterRepository extends JpaRepository<ErrorReporter, Integer> {}

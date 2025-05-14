@@ -1,10 +1,9 @@
 package com.viettran.reading_story_web.dto.response;
 
-import com.viettran.reading_story_web.entity.mysql.Story;
+import java.util.List;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @Builder

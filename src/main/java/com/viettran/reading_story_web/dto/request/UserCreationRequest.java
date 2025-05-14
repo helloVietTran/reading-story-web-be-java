@@ -1,6 +1,5 @@
 package com.viettran.reading_story_web.dto.request;
 
-import com.viettran.reading_story_web.validator.PasswordMatchesConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,7 +19,7 @@ public class UserCreationRequest {
     @NotNull(message = "USERNAME_IS_REQUIRED")
     String name;
 
-    @Size(min = 6, max = 20, message = "INVALID_PASSWORD")
+    @Size(min = 6, max = 16, message = "INVALID_PASSWORD")
     String password;
 
     String confirmPassword;

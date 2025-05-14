@@ -1,0 +1,800 @@
+{
+	"info": {
+		"_postman_id": "0a518708-f654-43b8-a854-c7a5ed05d6ef",
+		"name": "Reading-Request",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28411505"
+	},
+	"item": [
+		{
+			"name": "avatar_frame",
+			"item": []
+		},
+		{
+			"name": "chapter",
+			"item": [
+				{
+					"name": "get all chapters 1 story",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/3/all-chapters",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"3",
+								"all-chapters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get chapters pagi",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/3/chapters",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"3",
+								"chapters"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get 1 chapter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/chapters/808dd367-4177-42cf-afc0-bdd08ba3f47d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"chapters",
+								"808dd367-4177-42cf-afc0-bdd08ba3f47d"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete chapter",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/chapters/{chapterId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"chapters",
+								"{chapterId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update chapter",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/chapters/{chapterId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"chapters",
+								"{chapterId}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "increase view",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/3/chapters/808dd367-4177-42cf-afc0-bdd08ba3f47d/increase-view",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"3",
+								"chapters",
+								"808dd367-4177-42cf-afc0-bdd08ba3f47d",
+								"increase-view"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get chapter by chap vs storyId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/3/chap?chap=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"3",
+								"chap"
+							],
+							"query": [
+								{
+									"key": "chap",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get resoucres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/api/stories/chapters/d3d32170-da7c-4d6f-8795-c0f77ad933c9/resource",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"chapters",
+								"d3d32170-da7c-4d6f-8795-c0f77ad933c9",
+								"resource"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comment",
+			"item": []
+		},
+		{
+			"name": "email",
+			"item": []
+		},
+		{
+			"name": "genre",
+			"item": []
+		},
+		{
+			"name": "identity",
+			"item": [
+				{
+					"name": "refresh",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJudW1iZXJ6ZXJvMDkwOUBnbWFpbC5jb20iLCJpc1ZlcmlmaWVkIjpmYWxzZSwic2NvcGUiOiJST0xFX1VTRVIgQkFTSUMiLCJpc3MiOiJib29raW5nLmNvbSIsImlkIjoiYTFmYWYzMzItNDg0Ny00MjE1LWFiYWMtMTJhMDM1ODI0OGRlIiwiZXhwIjoxNzMyNDU5ODYwLCJpYXQiOjE3MzIzNzM0NjAsImp0aSI6IjM3YzUwZjhiLTQ1YTMtNGU3MC1hY2U0LWI5MDIwYjQ5MjlkNyJ9.DiHfP-IekgnGzLwUm3sI0BD9htAozbQlkg4QhdFocTc8YsVudnQkU-25Pzn0-D2xHNVexr_JFlAgAe-IR8zgrw\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/refresh",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "introspect",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJudW1iZXJ6ZXJvMDkwOUBnbWFpbC5jb20iLCJpc1ZlcmlmaWVkIjpmYWxzZSwic2NvcGUiOiJST0xFX1VTRVIgQkFTSUMiLCJpc3MiOiJib29raW5nLmNvbSIsImlkIjoiYTFmYWYzMzItNDg0Ny00MjE1LWFiYWMtMTJhMDM1ODI0OGRlIiwiZXhwIjoxNzMyMzc3MTU2LCJpYXQiOjE3MzIzNzM1NTYsImp0aSI6ImZmZTliNmY1LTEyOWItNGEwMy1iZmE0LWU0M2MzMjhlMmM4MyJ9.cb__LXFT1RJxR_sfKWD4UrOWHKJM0roZtuAwlwEkHJL2LvcHtb0fmKDGhZb27NQCffBWdwiBCvS9nD19wLslVg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/introspect",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"introspect"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin123@gmail.com\",\r\n    \"password\": \"adminweb123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJudW1iZXJ6ZXJvMDkwOUBnbWFpbC5jb20iLCJpc1ZlcmlmaWVkIjpmYWxzZSwic2NvcGUiOiJST0xFX1VTRVIgQkFTSUMiLCJpc3MiOiJib29raW5nLmNvbSIsImlkIjoiYTFmYWYzMzItNDg0Ny00MjE1LWFiYWMtMTJhMDM1ODI0OGRlIiwiZXhwIjoxNzMyMzc3MTU2LCJpYXQiOjE3MzIzNzM1NTYsImp0aSI6ImZmZTliNmY1LTEyOWItNGEwMy1iZmE0LWU0M2MzMjhlMmM4MyJ9.cb__LXFT1RJxR_sfKWD4UrOWHKJM0roZtuAwlwEkHJL2LvcHtb0fmKDGhZb27NQCffBWdwiBCvS9nD19wLslVg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "level",
+			"item": []
+		},
+		{
+			"name": "permission",
+			"item": []
+		},
+		{
+			"name": "point",
+			"item": []
+		},
+		{
+			"name": "reaction",
+			"item": []
+		},
+		{
+			"name": "reading_story",
+			"item": []
+		},
+		{
+			"name": "role",
+			"item": []
+		},
+		{
+			"name": "story",
+			"item": [
+				{
+					"name": "create story",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzOTcyNTU5MS01NjJlLTQwNzMtYmRiMS1jMTU1YTgzNGQyYzgiLCJpc1ZlcmlmaWVkIjp0cnVlLCJzY29wZSI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaXNzIjoicmVhZGluZy1zdG9yeS13ZWIuY29tIiwiaWQiOiIzOTcyNTU5MS01NjJlLTQwNzMtYmRiMS1jMTU1YTgzNGQyYzgiLCJleHAiOjE3MzQzNjM2MTgsImlhdCI6MTczNDM2MDAxOCwianRpIjoiOWEyYTg0MDMtOGVkZS00MjJkLThlZWYtZTAzOWU0ZDRmNzQyIn0.1clSyDnCk7N4ldAx6ExHn2J3vjXWXftQDYhCnbYT_H3BWUSESaHwDaNg85QLrVt4a6EMFxXUYd52z-pasgw4Vg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Bậc Thầy Thiết Kế Điền Trang",
+									"type": "text"
+								},
+								{
+									"key": "otherName",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "Kim Suho, một kĩ sư dân dụng đã xuyên không thành một quý tộc trong cuốn tiểu thuyết. Đời anh sẽ trôi về đâu đây? Dự án điền trang sắp thất bại, được lưu lại để thiết kế, xây dựng và bán. Cơ hội đặc biệt được chờ đợi trên khắp lục địa! Giao thông uy tín, khu giáo dục tốt nhất, khu rừng dễ chịu, và một cuộc sống địa chủ cao cấp của gia tộc Frontera mà mọi người chờ đợi. Một hợp đồng trên cơ sở đến trước phục vụ trước!",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "BOTH",
+									"type": "text"
+								},
+								{
+									"key": "genreIds",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "genreIds",
+									"value": "14",
+									"type": "text"
+								},
+								{
+									"key": "genreIds",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1efb2e9f-1ee8-4700-af82-87be84ed6bf8"
+								},
+								{
+									"key": "status",
+									"value": "IN_PROCESS",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch stories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyNmFiNTk0MC01NGU1LTQ4N2MtYjRiOS03ZTlhMjQxNzRmNGQiLCJpc1ZlcmlmaWVkIjp0cnVlLCJzY29wZSI6IlJPTEVfVVNFUiBST0xFX0FETUlOIiwiaXNzIjoicmVhZGluZy1zdG9yeS13ZWIuY29tIiwiaWQiOiIyNmFiNTk0MC01NGU1LTQ4N2MtYjRiOS03ZTlhMjQxNzRmNGQiLCJleHAiOjE3MzQwMDE5MDcsImlhdCI6MTczMzk5ODMwNywianRpIjoiZWI5YmE5MTQtNDVjNS00N2M1LTllMTEtYzViZjQwMDg2NThhIn0.MC0wRVYNI8Sie1pOETlHW1cje4OhuWAY0MziAX3MdsAuIFUll8kcPPYEf8FXDNYz0XdKN7F2AyEl2suXnONhtA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories?page=1&size=32",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "32"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete story",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJudW1iZXJ6ZXJvMDkwOUBnbWFpbC5jb20iLCJpc1ZlcmlmaWVkIjpmYWxzZSwic2NvcGUiOiJST0xFX0FETUlOIEFEVkFOQ0VEIEJBU0lDIiwiaXNzIjoicmVhZGluZy1zdG9yeS13ZWIuY29tIiwiaWQiOiI0M2M4MTdjNy02ZGI2LTQwNDUtYTMyMy02ZmUyNjEyOGI2YWEiLCJleHAiOjE3MzMzOTM2NDEsImlhdCI6MTczMzM5MDA0MSwianRpIjoiNjliYmMwOTctZWRhZC00Y2YyLWIyNTgtNzNmYjdiZGYxNmM2In0.-HJxjVd5aadQmtQ-VvDKdy3mtYVNIR_Cejv0BzsWqqHQuRwDLcBnY-lNFduDSRMHXBVdjUnXscynxTgAdzhuoA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search stories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/search?keyword=ta là",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "ta là"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "rating",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJudW1iZXJ6ZXJvMDkwOUBnbWFpbC5jb20iLCJpc1ZlcmlmaWVkIjpmYWxzZSwic2NvcGUiOiJST0xFX0FETUlOIEFEVkFOQ0VEIEJBU0lDIiwiaXNzIjoicmVhZGluZy1zdG9yeS13ZWIuY29tIiwiaWQiOiI0M2M4MTdjNy02ZGI2LTQwNDUtYTMyMy02ZmUyNjEyOGI2YWEiLCJleHAiOjE3MzMzOTU0MDUsImlhdCI6MTczMzM5MTgwNSwianRpIjoiYTNmMTU4N2EtOWE2YS00ZTkxLWIyNmQtZGY5OWUxMmFkMjA5In0._xfhtynxJmOD2LyZOiaudGa3Gz5cDEdue3Pz3n6gQ2kI6FKUKJyN8b8Lijkht6brvoerHg_iESi2CpTvBnTpgw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"point\": \"7\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stories/12/rate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"12",
+								"rate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find-story",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/find-story?genreCode=&status=2&sort=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"find-story"
+							],
+							"query": [
+								{
+									"key": "genreCode",
+									"value": ""
+								},
+								{
+									"key": "status",
+									"value": "2"
+								},
+								{
+									"key": "sort",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get top 10 by view",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/top-views",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"top-views"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "hot-story",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/hot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"hot"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by gender",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/stories/gender?gender=FEMALE",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"gender"
+							],
+							"query": [
+								{
+									"key": "gender",
+									"value": "FEMALE"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get my followed stories",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1NTBkM2MwZi1jNDc0LTQzZGMtYTY5Yy1jNmY0ZmIxY2Q2MzQiLCJpc1ZlcmlmaWVkIjp0cnVlLCJzY29wZSI6IlJPTEVfQURNSU4gUk9MRV9VU0VSIiwiaXNzIjoicmVhZGluZy1zdG9yeS13ZWIuY29tIiwiaWQiOiI1NTBkM2MwZi1jNDc0LTQzZGMtYTY5Yy1jNmY0ZmIxY2Q2MzQiLCJleHAiOjE3NDcwMjE2MTksImlhdCI6MTc0NzAxODAxOSwianRpIjoiOTJmN2FiMWEtZTY3YS00MmI5LWFiMGQtYmM4NjcyZjIyMjBhIn0.0ZnwuOnVWBY9RBHCWTZQ-v4BMKyX40eGTaRN6yH-xdz40RYzrd79ypCJO2uUbWZj1vXFqtKo0mC-J3ewRiF28g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Võ đang kỳ hiệp",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Là một bộ truyện hay và tương đối hài hước",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "BOTH",
+									"type": "text"
+								},
+								{
+									"key": "genreIds",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "genreIds",
+									"value": "14",
+									"type": "text"
+								},
+								{
+									"key": "genreIds",
+									"value": "23",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/DELL/OneDrive/Máy tính/story-logo/võ đang kì hiep.jpg"
+								},
+								{
+									"key": "status",
+									"value": "IN_PROCESS",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/stories/my-followed-stories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"stories",
+								"my-followed-stories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": []
+		}
+	]
+}

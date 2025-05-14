@@ -1,10 +1,11 @@
 package com.viettran.reading_story_web.repository;
 
-import com.viettran.reading_story_web.entity.mysql.Reaction;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.viettran.reading_story_web.entity.mysql.Reaction;
 
 @Repository
 public interface ReactionRepository extends JpaRepository<Reaction, String> {
