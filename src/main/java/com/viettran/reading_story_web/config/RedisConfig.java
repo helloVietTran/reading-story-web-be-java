@@ -2,6 +2,7 @@ package com.viettran.reading_story_web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories(basePackages = "com.viettran.reading_story_web.repository.redis")
+@EnableJpaRepositories(basePackages = "com.viettran.reading_story_web.repository")
 public class RedisConfig {
 
     @Bean

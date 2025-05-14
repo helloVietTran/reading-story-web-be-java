@@ -1,4 +1,4 @@
-package com.viettran.reading_story_web.repository.custom;
+package com.viettran.reading_story_web.repository;
 
 import java.util.ArrayList;
 import java.util.List;

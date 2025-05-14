@@ -30,7 +30,7 @@ import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.ChapterMapper;
 import com.viettran.reading_story_web.mapper.StoryMapper;
 import com.viettran.reading_story_web.repository.*;
-import com.viettran.reading_story_web.repository.custom.CustomStoryRepository;
+import com.viettran.reading_story_web.repository.CustomStoryRepository;
 import com.viettran.reading_story_web.repository.redis.StoryCacheRepository;
 import com.viettran.reading_story_web.scheduler.StoryJobScheduler;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
