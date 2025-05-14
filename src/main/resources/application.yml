@@ -23,7 +23,7 @@ spring:
 
 app:
   brevo:
-    apikey: ${BREVO_API_KEY}
+    apikey: ${BREVO_API_KEY:<your-api-key>}
     url: https://api.brevo.com
   cloudinary:
     cloud-name: ${CLOUDINARY_CLOUDNAME}
@@ -40,4 +40,4 @@ app:
     avatar-frame: "avatar_frame_folder"
   admin-email: ${ADMIN_EMAIL:numberzero0909@gmail.com}
   frontend:
-    url: ${FRONTEND_URL:http://localhost:5173}
+    url: ${FRONTEND_URL:https://v-story.vercel.app}
