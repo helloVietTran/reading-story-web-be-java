@@ -26,9 +26,9 @@ app:
     apikey: ${BREVO_API_KEY:<your-api-key>}
     url: https://api.brevo.com
   cloudinary:
-    cloud-name: ${CLOUDINARY_CLOUDNAME}
-    api-key: ${CLOUDINARY_API_KEY}
-    api-secret: ${CLOUDINARY_API_SECRET}
+    cloud-name: ${CLOUDINARY_CLOUDNAME:<your-cloud-name>}
+    api-key: ${CLOUDINARY_API_KEY:<your-api-key>}
+    api-secret: ${CLOUDINARY_API_SECRET::<your-api-secret>}
   jwt:
     secretKey: ${JWT_SECRETKEY:iamvietanh<3}
     access-duration: 3600 # in seconds
