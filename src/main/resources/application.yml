@@ -17,7 +17,8 @@ spring:
   redis:
     host: ${REDISHOST}
     port: ${REDISPORT}
-    password: ${REDISPASSWORD} # nếu Redis của Railway có password
+    password: ${REDISPASSWORD}
+    username: ${REDISUSER}
     timeout: 10000
 
 app:
