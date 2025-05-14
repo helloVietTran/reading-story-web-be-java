@@ -1,21 +1,23 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
   servlet:
     context-path: /api
 
 spring:
   datasource:
-    url: ${DBMS_CONNECTION:jdbc:mysql://localhost:3306/reading_story_web_db}
-    driverClassName: "com.mysql.cj.jdbc.Driver"
-    password: ${DBMS_PASSWORD:root}
-    username: ${DBMS_USERNAME:root}
+    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+
   redis:
-    host: localhost
-    port: 6379
+    host: ${REDISHOST}
+    port: ${REDISPORT}
+    password: ${REDISPASSWORD} # nếu Redis của Railway có password
     timeout: 10000
 
 app:
@@ -28,7 +30,7 @@ app:
     api-secret: ${CLOUDINARY_API_SECRET}
   jwt:
     secretKey: ${JWT_SECRETKEY:iamvietanh<3}
-    access-duration: 3600 # in second
+    access-duration: 3600 # in seconds
     refreshable-duration: 36000 # in seconds
   folder:
     avatar: "avatar_folder"
@@ -38,5 +40,3 @@ app:
   admin-email: ${ADMIN_EMAIL:numberzero0909@gmail.com}
   frontend:
     url: ${FRONTEND_URL:http://localhost:5173}
-
-    # to do: tạo network và thêm biến môi trường
