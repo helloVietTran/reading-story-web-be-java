@@ -15,15 +15,15 @@ import lombok.experimental.NonFinal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CloudinaryConfig {
     @NonFinal
-    @Value("${app.cloudinary.cloud-name:dlfrltm8x}")
+    @Value("${app.cloudinary.cloud-name}")
     String cloudName;
 
     @NonFinal
-    @Value("${app.cloudinary.api-key:357454587825522}")
+    @Value("${app.cloudinary.api-key}")
     String apiKey;
 
     @NonFinal
-    @Value("${app.cloudinary.api-secret:wBBGGx44RolTSHoes5bsDWxmce4}")
+    @Value("${app.cloudinary.api-secret}")
     String apiSecret;
 
     @Bean
