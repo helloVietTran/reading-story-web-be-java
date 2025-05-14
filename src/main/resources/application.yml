@@ -4,21 +4,21 @@ server:
     context-path: /api
 
 spring:
-  datasource:
-    url: jdbc:mysql://root:trmAKIhIVbVtfRdiMGkTaKYOsriztgui@mysql.railway.internal:3306/railway
+  datasource
+    url: jdbc:mysql://root:trmAKIhIVbVtfRdiMGkTaKYOsriztgui@yamanote.proxy.rlwy.net:35566/railway
     driverClassName: com.mysql.cj.jdbc.Driver
     username: ${MYSQLUSER:root}
-    password: ${MYSQLPASSWORD:root}
+    password: ${MYSQLPASSWORD:trmAKIhIVbVtfRdiMGkTaKYOsriztgui}
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
-
+    
   redis:
-    host: ${REDISHOST:localhost}
-    port: ${REDISPORT:6379}
-    password: ${REDISPASSWORD}
-    username: ${REDISUSER}
+    host: ${REDISHOST:shuttle.proxy.rlwy.net}
+    port: ${REDISPORT:43580}
+    password: ${REDISPASSWORD:xGJQrIuPdTLqbyBQengrSyTUmuKgbTKM}
+    username: ${REDISUSER:default}
     timeout: 10000
 
 app:
