@@ -28,8 +28,8 @@ public class ApplicationInitConfig {
 
     PasswordEncoder passwordEncoder;
 
-    static final String ADMIN_EMAIL = "numberzero0909@gmail.com";
-    static final String ADMIN_PASSWORD = "adminweb";
+    static final String ADMIN_EMAIL = "admin123@gmail.com";
+    static final String ADMIN_PASSWORD = "adminweb123";
 
     @Bean
     ApplicationRunner applicationRunner(
