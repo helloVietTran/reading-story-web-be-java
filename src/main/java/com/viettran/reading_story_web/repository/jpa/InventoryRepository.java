@@ -1,4 +1,4 @@
-package com.viettran.reading_story_web.repository;
+package com.viettran.reading_story_web.repository.jpa;
 
 import java.time.Instant;
 import java.util.List;

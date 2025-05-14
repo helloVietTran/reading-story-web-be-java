@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.viettran.reading_story_web.repository.jpa.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +30,6 @@ import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.ChapterMapper;
 import com.viettran.reading_story_web.mapper.StoryMapper;
-import com.viettran.reading_story_web.repository.*;
-import com.viettran.reading_story_web.repository.CustomStoryRepository;
 import com.viettran.reading_story_web.repository.redis.StoryCacheRepository;
 import com.viettran.reading_story_web.scheduler.StoryJobScheduler;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
@@ -46,7 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class StoryService {
-    StoryRepository storyRepository;
+    ReactionRepository.StoryRepository storyRepository;
     FollowRepository followRepository;
     ChapterRepository chapterRepository;
     CustomStoryRepository customStoryRepository;

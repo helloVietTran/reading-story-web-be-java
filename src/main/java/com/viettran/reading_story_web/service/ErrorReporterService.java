@@ -9,7 +9,7 @@ import com.viettran.reading_story_web.dto.request.ErrorReporterRequest;
 import com.viettran.reading_story_web.dto.response.ErrorReporterResponse;
 import com.viettran.reading_story_web.entity.mysql.ErrorReporter;
 import com.viettran.reading_story_web.mapper.ErrorReporterMapper;
-import com.viettran.reading_story_web.repository.ErrorReporterRepository;
+import com.viettran.reading_story_web.repository.jpa.ErrorReporterRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

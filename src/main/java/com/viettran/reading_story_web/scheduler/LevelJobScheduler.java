@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.viettran.reading_story_web.entity.mysql.Level;
-import com.viettran.reading_story_web.repository.LevelRepository;
+import com.viettran.reading_story_web.repository.jpa.LevelRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

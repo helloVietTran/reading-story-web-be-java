@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import com.viettran.reading_story_web.repository.jpa.*;
 import org.springframework.stereotype.Service;
 
 import com.viettran.reading_story_web.dto.request.BuyItemsRequest;
@@ -16,7 +17,6 @@ import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.AvatarFrameMapper;
 import com.viettran.reading_story_web.mapper.PointMapper;
 import com.viettran.reading_story_web.mapper.UserMapper;
-import com.viettran.reading_story_web.repository.*;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
 
 import lombok.AccessLevel;
@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PointService {
     PointRepository pointRepository;
-    UserRepository userRepository;
+    ReadingHistoryRepository.UserRepository userRepository;
     PointHistoryRepository pointHistoryRepository;
     AvatarFrameRepository avatarFrameRepository;
     InventoryRepository inventoryRepository;

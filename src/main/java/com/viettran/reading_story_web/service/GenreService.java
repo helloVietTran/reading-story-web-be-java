@@ -15,7 +15,7 @@ import com.viettran.reading_story_web.entity.mysql.Genre;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.GenreMapper;
-import com.viettran.reading_story_web.repository.GenreRepository;
+import com.viettran.reading_story_web.repository.jpa.GenreRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

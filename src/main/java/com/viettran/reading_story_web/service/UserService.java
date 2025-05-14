@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
+import com.viettran.reading_story_web.repository.jpa.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,6 @@ import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.LevelMapper;
 import com.viettran.reading_story_web.mapper.StoryMapper;
 import com.viettran.reading_story_web.mapper.UserMapper;
-import com.viettran.reading_story_web.repository.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
-    UserRepository userRepository;
-    RoleRepository roleRepository;
-    StoryRepository storyRepository;
+    ReadingHistoryRepository.UserRepository userRepository;
+    ReactionRepository.RoleRepository roleRepository;
+    ReactionRepository.StoryRepository storyRepository;
     FollowRepository followRepository;
     ResetPasswordTokenRepository resetPasswordTokenRepository;
     LevelRepository levelRepository;

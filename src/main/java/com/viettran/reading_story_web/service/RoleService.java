@@ -3,14 +3,14 @@ package com.viettran.reading_story_web.service;
 import java.util.HashSet;
 import java.util.List;
 
+import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.viettran.reading_story_web.dto.request.RoleRequest;
 import com.viettran.reading_story_web.dto.response.RoleResponse;
 import com.viettran.reading_story_web.mapper.RoleMapper;
-import com.viettran.reading_story_web.repository.PermissionRepository;
-import com.viettran.reading_story_web.repository.RoleRepository;
+import com.viettran.reading_story_web.repository.jpa.PermissionRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService {
-    RoleRepository roleRepository;
+    ReactionRepository.RoleRepository roleRepository;
     PermissionRepository permissionRepository;
     RoleMapper roleMapper;
 

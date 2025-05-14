@@ -9,7 +9,7 @@ import com.viettran.reading_story_web.dto.request.PermissionRequest;
 import com.viettran.reading_story_web.dto.response.PermissionResponse;
 import com.viettran.reading_story_web.entity.mysql.Permission;
 import com.viettran.reading_story_web.mapper.PermissionMapper;
-import com.viettran.reading_story_web.repository.PermissionRepository;
+import com.viettran.reading_story_web.repository.jpa.PermissionRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

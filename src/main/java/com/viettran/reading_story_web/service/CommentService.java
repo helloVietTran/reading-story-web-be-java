@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import com.viettran.reading_story_web.repository.jpa.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,6 @@ import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.CommentMapper;
 import com.viettran.reading_story_web.mapper.LevelMapper;
-import com.viettran.reading_story_web.repository.*;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
 
 import lombok.AccessLevel;
@@ -35,9 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommentService {
-    StoryRepository storyRepository;
+    ReactionRepository.StoryRepository storyRepository;
     CommentRepository commentRepository;
-    UserRepository userRepository;
+    ReadingHistoryRepository.UserRepository userRepository;
     ChapterRepository chapterRepository;
     InventoryRepository inventoryRepository;
     AuthenticationService authenticationService;

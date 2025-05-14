@@ -10,7 +10,7 @@ import com.viettran.reading_story_web.entity.mysql.Inventory;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.AvatarFrameMapper;
-import com.viettran.reading_story_web.repository.InventoryRepository;
+import com.viettran.reading_story_web.repository.jpa.InventoryRepository;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
 
 import lombok.AccessLevel;

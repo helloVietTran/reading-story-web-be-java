@@ -12,7 +12,7 @@ import com.viettran.reading_story_web.entity.mysql.Level;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.LevelMapper;
-import com.viettran.reading_story_web.repository.LevelRepository;
+import com.viettran.reading_story_web.repository.jpa.LevelRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -13,7 +13,7 @@ import com.viettran.reading_story_web.entity.mysql.AvatarFrame;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.AvatarFrameMapper;
-import com.viettran.reading_story_web.repository.AvatarFrameRepository;
+import com.viettran.reading_story_web.repository.jpa.AvatarFrameRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

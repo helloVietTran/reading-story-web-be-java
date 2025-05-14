@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
+import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +27,8 @@ import com.viettran.reading_story_web.exception.ErrorCode;
 import com.viettran.reading_story_web.mapper.ChapterMapper;
 import com.viettran.reading_story_web.mapper.CommentMapper;
 import com.viettran.reading_story_web.mapper.ImageMapper;
-import com.viettran.reading_story_web.repository.ChapterRepository;
-import com.viettran.reading_story_web.repository.ImageRepository;
-import com.viettran.reading_story_web.repository.StoryRepository;
+import com.viettran.reading_story_web.repository.jpa.ChapterRepository;
+import com.viettran.reading_story_web.repository.jpa.ImageRepository;
 import com.viettran.reading_story_web.scheduler.ChapterJobScheduler;
 import com.viettran.reading_story_web.utils.DateTimeFormatUtil;
 
@@ -46,7 +46,7 @@ public class ChapterService {
     StringRedisTemplate stringRedisTemplate;
 
     ChapterRepository chapterRepository;
-    StoryRepository storyRepository;
+    ReactionRepository.StoryRepository storyRepository;
     ImageRepository imageRepository;
 
     ImageMapper imageMapper;

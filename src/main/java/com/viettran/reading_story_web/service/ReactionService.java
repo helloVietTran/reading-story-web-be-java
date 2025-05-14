@@ -2,6 +2,7 @@ package com.viettran.reading_story_web.service;
 
 import java.util.Optional;
 
+import com.viettran.reading_story_web.repository.jpa.ReadingHistoryRepository;
 import org.springframework.stereotype.Service;
 
 import com.viettran.reading_story_web.dto.response.ReactionResponse;
@@ -11,9 +12,8 @@ import com.viettran.reading_story_web.entity.mysql.User;
 import com.viettran.reading_story_web.enums.ReactionType;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
-import com.viettran.reading_story_web.repository.CommentRepository;
-import com.viettran.reading_story_web.repository.ReactionRepository;
-import com.viettran.reading_story_web.repository.UserRepository;
+import com.viettran.reading_story_web.repository.jpa.CommentRepository;
+import com.viettran.reading_story_web.repository.jpa.ReactionRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReactionService {
     ReactionRepository reactionRepository;
     CommentRepository commentRepository;
-    UserRepository userRepository;
+    ReadingHistoryRepository.UserRepository userRepository;
 
     AuthenticationService authenticationService;
 

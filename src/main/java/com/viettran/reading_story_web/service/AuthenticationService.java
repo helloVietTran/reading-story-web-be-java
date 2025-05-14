@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
+import com.viettran.reading_story_web.repository.jpa.ReadingHistoryRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,8 +36,7 @@ import com.viettran.reading_story_web.entity.mysql.DisabledToken;
 import com.viettran.reading_story_web.entity.mysql.User;
 import com.viettran.reading_story_web.exception.AppException;
 import com.viettran.reading_story_web.exception.ErrorCode;
-import com.viettran.reading_story_web.repository.DisabledTokenRepository;
-import com.viettran.reading_story_web.repository.UserRepository;
+import com.viettran.reading_story_web.repository.jpa.DisabledTokenRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
-    UserRepository userRepository;
+    ReadingHistoryRepository.UserRepository userRepository;
     DisabledTokenRepository disabledTokenRepository;
 
     PasswordEncoder passwordEncoder;

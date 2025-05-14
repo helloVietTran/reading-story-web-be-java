@@ -12,7 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 @EnableRedisRepositories(basePackages = "com.viettran.reading_story_web.repository.redis")
-@EnableJpaRepositories(basePackages = "com.viettran.reading_story_web.repository")
+@EnableJpaRepositories(basePackages = "com.viettran.reading_story_web.repository.jpa")
 public class RedisConfig {
 
     @Bean
