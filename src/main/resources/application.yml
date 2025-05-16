@@ -15,8 +15,8 @@ spring:
     show-sql: false
     
   redis:
-    host: ${REDISHOST:shuttle.proxy.rlwy.net}
-    port: ${REDISPORT:43580}
+    host: ${REDISHOST:shuttle.proxy.rlwy.net:43580}
+    port: ${REDISPORT:6379}
     password: ${REDISPASSWORD:xGJQrIuPdTLqbyBQengrSyTUmuKgbTKM}
     username: ${REDISUSER:default}
     timeout: 10000
