@@ -28,6 +28,7 @@
 - Xử lý exception tốt, mỗi request thất bại đều có mã lỗi và message phù hợp để dễ debug
 - Phân trang dữ liệu danh sách
 - Validate request và xây dựng các mapper
+- Thử viết dockerfile và dockerize dự án 
 
   
 ## 🛠️ Công nghệ nổi bật
