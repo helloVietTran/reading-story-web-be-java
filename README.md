@@ -14,7 +14,6 @@
 - Thực hiện kiểm tra xem người dùng đã đọc chapter chưa, nếu đọc rồi sẽ báo cho người đọc
 - Dark - Light theme
 - Chức năng bình luận
-- Hệ thống alert rõ ràng
 
 ### Công việc ở backend
 - Phân tích bài toán website đọc truyện tranh và xây dựng các bảng có mối quan hệ phù hợp để lưu dữ liệu đáp ứng bài toán
@@ -28,7 +27,8 @@
 - Xử lý exception tốt, mỗi request thất bại đều có mã lỗi và message phù hợp để dễ debug
 - Phân trang dữ liệu danh sách
 - Validate request và xây dựng các mapper
-- Thử viết dockerfile và dockerize dự án 
+- Thử viết dockerfile và dockerize dự án
+- Viết một số unit test cho dự án
 
   
 ## 🛠️ Công nghệ nổi bật
