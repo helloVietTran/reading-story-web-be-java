@@ -1,4 +1,4 @@
-### 📚 VieTruyen – WEB ĐỌC TRUYỆN TRANH ONLINE
+# 📚 VieTruyen – WEB ĐỌC TRUYỆN TRANH ONLINE
   VieTruyen là một website đọc truyện tranh online tập trung giải quyết các bài toán thực tế ở backend như: phân quyền, caching, cron job, mua bán vật phẩm, lưu lịch sử đọc, quản lý nội dung và tối ưu hiệu năng.
 
 Mục tiêu dự án:
@@ -76,8 +76,8 @@ comment
 - created_at
 ```
 ---
-
-Các Solution đã được áp dụng vào repo đồ án tốt nghiệp (branch develop) based trên repo này: https://github.com/helloVietTran/graduate-project
+  
+**Note"** Các solution đã được áp dụng vào repo đồ án tốt nghiệp (branch develop) based trên repo này: https://github.com/helloVietTran/graduate-project
 
 ## III. Tính năng chính
 - Tìm kiếm truyện theo nhiều tiêu chí (số chapter, thời gian đăng, truyện hot hay không)
